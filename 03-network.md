@@ -3,9 +3,19 @@
 ## Subnet
 
 - **Network:** 10.2.7.0/24
-- **Gateway:** 10.2.7.1 (OPNsense)
+- **Gateway:** 10.2.7.1 (OPNsense 26.1.6_2 / FreeBSD 14.3)
 - **DHCP:** Pi-hole (container 100, 10.2.7.2)
 - **DNS:** Pi-hole (ad-blocking)
+- **WAN:** 192.168.0.171/24 (DHCP)
+
+## OPNsense Details
+
+- **OS:** OPNsense 26.1.6_2 on FreeBSD 14.3-RELEASE-p10
+- **Uptime:** 22+ days
+- **SSH:** Port 22 open, menu-based login (option 8 = shell)
+- **HTTPS Web UI:** Port 443
+- **Disk:** 440 GB free (0% used, ZFS)
+- **Status:** Fully up to date, idle load
 
 ## IP Assignments
 
