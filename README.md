@@ -1,6 +1,6 @@
 # 🏠 Homelab Documentation
 
-**Owner:** Anthony Pipher (iNfamousJerk)  
+**Owner:** Anthony Piper (iNfamousJerk)  
 **Started:** May 2026  
 **Goal:** Hands-on networking experience → NOC / Jr. Network Admin role
 
