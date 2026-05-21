@@ -12,9 +12,16 @@
 
 ## Containers
 
-| Container | User | Password | SSH |
-|-----------|------|----------|-----|
-| 106 - Grafana (Ubuntu) | root | [REDACTED] | Key-based auth |
+| Container | User | Password Theme | SSH |
+|-----------|------|---------------|-----|
+| 100 - Pi-hole | root | [REDACTED - themed] | Console only |
+| 101 - Immich | root | [REDACTED - themed] | Console only |
+| 102 - PiAlert | root | [REDACTED - themed] | Console only |
+| 103 - Homarr | root | [REDACTED - themed] | Console only |
+| 104 - Nextcloud | root | [REDACTED - themed] | Console only |
+| 106 - Grafana | root | [REDACTED - themed] | Key-based + password |
+
+> **Note:** All passwords are themed phrases related to each container's function. Stored securely offline.
 
 ## Services
 
