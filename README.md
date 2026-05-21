@@ -32,24 +32,61 @@ This homelab runs on a **Proxmox** hypervisor hosting multiple LXC containers se
 | 105 | Hermes Agent | 10.2.7.107 | AI assistant | ✅ Online |
 | 106 | Grafana | 10.2.7.108 | Monitoring dashboards | ✅ Online |
 
+---
+
+## 🛠️ How to Reproduce (Step by Step)
+
+Each doc includes **exact copy-paste commands** for rebuilding from scratch:
+
+### Infrastructure
+| Doc | What It Covers |
+|-----|----------------|
+| [01-proxmox.md](01-proxmox.md) | Creating LXC containers from templates, managing via API |
+| [02-containers.md](02-containers.md) | Container configs, Docker install inside LXC |
+| [03-network.md](03-network.md) | Subnet, OPNsense, IP assignments |
+
+### Monitoring (flagship project)
+| Doc | What It Covers |
+|-----|----------------|
+| [10-grafana.md](10-grafana.md) | **Full monitoring stack** — Prometheus, Grafana, Alertmanager, cAdvisor, Pi-hole exporter, Discord alerts |
+| [11-docker.md](11-docker.md) | Docker install, compose commands, AppArmor fix |
+
+### Services
+| Doc | What It Covers |
+|-----|----------------|
+| [04-pihole.md](04-pihole.md) | Pihole DNS + DHCP |
+| [05-immich.md](05-immich.md) | Photo backup |
+| [06-pialert.md](06-pialert.md) | Network monitoring |
+| [07-homarr.md](07-homarr.md) | Dashboard |
+| [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
+| [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
+
+### Networking & Access
+| Doc | What It Covers |
+|-----|----------------|
+| [12-tailscale.md](12-tailscale.md) | VPN access setup |
+| [CREDENTIALS.md](CREDENTIALS.md) | Login reference (passwords redacted) |
+
+---
+
 ## 📁 Repo Structure
 
 ```
 homelab-docs/
-├── README.md              ← You're here
-├── 01-proxmox.md          — Server setup & API access
-├── 02-containers.md       — All LXC containers
-├── 03-network.md          — Subnet, OPNsense, IPs
-├── 04-pihole.md           — DNS + DHCP
-├── 05-immich.md           — Photo backup
-├── 06-pialert.md          — Network monitoring
-├── 07-homarr.md           — Dashboard
-├── 08-nextcloud.md        — Cloud storage
-├── 09-hermes-agent.md     — AI assistant
-├── 10-grafana.md          — Grafana + Prometheus
-├── 11-docker.md           — Docker setup notes
-├── 12-tailscale.md        — VPN access
-└── CREDENTIALS.md         — Login reference (passwords redacted)
+├── README.md                   ← This file
+├── 01-proxmox.md               — Server setup & API access
+├── 02-containers.md            — All LXC containers + Docker setup
+├── 03-network.md               — Subnet, OPNsense, IPs
+├── 04-pihole.md                — DNS + DHCP
+├── 05-immich.md                — Photo backup
+├── 06-pialert.md               — Network monitoring
+├── 07-homarr.md                — Dashboard
+├── 08-nextcloud.md             — Cloud storage
+├── 09-hermes-agent.md          — AI assistant
+├── 10-grafana.md               — Full monitoring stack (Prometheus + Grafana + alerts)
+├── 11-docker.md                — Docker setup, compose, troubleshooting
+├── 12-tailscale.md             — VPN access
+└── CREDENTIALS.md              — Login reference (passwords redacted)
 ```
 
 ## 🔮 Future Plans
@@ -60,3 +97,4 @@ homelab-docs/
 - [ ] Nginx Proxy Manager
 - [ ] More Grafana dashboards
 - [ ] Automated backups
+- [ ] VLAN segmentation (IoT / management / trusted)
