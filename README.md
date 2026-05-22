@@ -60,7 +60,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [07-homarr.md](07-homarr.md) | Dashboard |
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
-| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM (deployed & removed) |
+| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM (fully removed May 2026) |
 
 ### Networking & Access
 | Doc | What It Covers |

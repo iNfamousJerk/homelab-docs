@@ -33,7 +33,7 @@
 | Homarr | http://10.2.7.105 | Local only |
 | Pi-hole | http://10.2.7.2/admin | Local only |
 | PiAlert | http://10.2.7.77 | Local only |
-| Wazuh | ❌ Removed (CT 108 destroyed May 2026) | N/A |
+| Wazuh | ❌ Fully removed (CT 108 destroyed + CT 106 Docker cleaned May 2026) | N/A |
 
 ## Notes
 

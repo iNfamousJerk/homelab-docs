@@ -37,11 +37,19 @@ mkdir -p config/wazuh_indexer_ssl_certs/
 
 A dedicated container (CT 108) was later provisioned to run Wazuh independently from the Grafana monitoring stack to avoid resource contention. It used the same deployment process but with more RAM/disk allocated.
 
-**Status:** ❌ Removed (May 2026)
+## Full Removal (May 2026)
 
-CT 108 was removed from Proxmox due to the following reasons:
-- Wazuh's resource requirements (~2.5 GB RAM for indexer + manager + dashboard) were too high for the available 32 GB host
-- The Wazuh agent deployment and agent management overhead outweighed the security monitoring benefits for this small homelab
+Wazuh has been **fully removed from the homelab** — both CT 108 (dedicated container) and the Docker deployment on CT 106 were cleaned up:
+
+| Step | Detail |
+|------|--------|
+| CT 108 | Proxmox container destroyed via API |
+| CT 106 Docker | 3 containers, 13 volumes, 5 images (~9 GB) removed |
+| Wazuh directory | `/opt/wazuh-docker/` deleted |
+
+Reasons:
+- Resource requirements (~2.5 GB RAM for indexer + manager + dashboard) were too high for the available 32 GB host
+- Agent deployment and management overhead outweighed the security monitoring benefits for this small homelab
 - Existing monitoring stack (Grafana + Prometheus + PiAlert) already covers most visibility needs
 
 ## Agent Installation (for reference)
