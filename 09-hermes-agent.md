@@ -15,7 +15,7 @@ The AI assistant running on container 105 (10.2.7.107). Provides autonomous assi
 - 💬 **Chat interface** — Discord, Telegram, SMS
 - 🖥️ **Proxmox API** — Manage containers, monitor resources
 - 📊 **Health checks** — Pollable JSON endpoint
-- ⏰ **Cron jobs** — Scheduled tasks
+- ⏰ **Cron jobs** — Automated server status reports every 6h via Discord
 - 🎨 **Display page** — Animated robot UI on port 8080
 - 💡 **Smart home** — Philips Hue control (via skill)
 
@@ -24,11 +24,11 @@ The AI assistant running on container 105 (10.2.7.107). Provides autonomous assi
 ### Homarr Widget
 Add as Custom API widget at `http://10.2.7.107:8642/health` for green checkmark status.
 
-### Grafana/Proxmox Monitoring
-Cron job checks Proxmox every 6 hours and reports:
-- CPU, RAM, disk, swap usage
-- Container online/offline status
-- Uptime alerts
+### Automated Server Reports
+Cron job checks Proxmox every 6 hours (midnight, 6am, noon, 6pm PDT) and reports via Discord:
+- PVE host: CPU, RAM, disk usage, uptime
+- Container statuses (running/stopped across all CTs)
+- Health flags (high disk, stopped containers)
 
 ## Display Page
 
