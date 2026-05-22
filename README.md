@@ -72,6 +72,10 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 
 ## 📁 Repo Structure
 
+This repo covers the homelab infrastructure. The media automation stack has its own repo:
+
+- **📺 [media-stack](https://github.com/iNfamousJerk/media-stack)** — Radarr, Sonarr, Prowlarr, qBittorrent, Jellyfin, Lidarr, Bazarr
+
 ```
 homelab-docs/
 ├── README.md                   ← This file
