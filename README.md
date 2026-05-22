@@ -24,13 +24,13 @@ This homelab runs on a **Proxmox** hypervisor hosting multiple LXC containers se
 
 | ID | Name | IP | Purpose | Status |
 |----|------|----|---------|--------|
-| 100 | Pi-hole | 10.2.7.2 | DNS + DHCP | ✅ Online |
-| 101 | Immich | — | Photo backup | ✅ Online |
-| 102 | PiAlert | 10.2.7.103 | Network monitoring | ✅ Online |
+| 100 | Hermes Agent | 10.2.7.107 | AI assistant | ✅ Online |
+| 101 | Immich | 10.2.7.44 | Photo backup | ✅ Online |
+| 102 | PiAlert | 10.2.7.77 | Network monitoring | ✅ Online |
 | 103 | Homarr | 10.2.7.105 | Dashboard | ✅ Online |
-| 104 | Nextcloud | — | Cloud storage | ✅ Online |
-| 105 | Hermes Agent | 10.2.7.107 | AI assistant | ✅ Online |
+| 104 | Nextcloud | 10.2.7.99 | Cloud storage | ✅ Online |
 | 106 | Grafana | 10.2.7.108 | Monitoring dashboards | ✅ Online |
+| 107 | Pi-hole | 10.2.7.2 | DNS + DHCP | ✅ Online |
 
 ---
 
