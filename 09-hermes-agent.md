@@ -18,6 +18,7 @@ The AI assistant running on container 107 (10.2.7.107). Provides autonomous assi
 - ⏰ **Cron jobs** — Automated server status reports every 6h via Discord
 - 🎨 **Display page** — Animated robot UI with text + voice chat on port 8080
 - 🤖 **ChatGPT-like chat** — Web UI with voice input, real-time responses via Hermes API
+- 🧬 **Self-improving persona** — Agent rewrites its own Soul/Identity/User/Memory files to evolve over time
 - 💡 **Smart home** — Philips Hue control (via skill)
 
 ## Automated Server Reports
@@ -26,6 +27,49 @@ Cron job checks Proxmox every 6 hours (midnight, 6am, noon, 6pm PDT) and reports
 - PVE host: CPU, RAM, disk usage, uptime
 - Container statuses (running/stopped across all CTs)
 - Health flags (high disk, stopped containers)
+
+## Self-Improving Agent Persona
+
+Inspired by Naz Louis' "Pixel" AI desk companion, Hermes maintains **4 personality files** that it actively rewrites over time:
+
+| File | Purpose | Updated |
+|------|---------|---------|
+| **Soul.md** | Core values, tone, behavior guidelines | User feedback → instant rewrite |
+| **Identity.md** | Who Hermes is (name, purpose, traits) | Self-discovery during conversations |
+| **User.md** | Who the user is, preferences, how Hermes perceives them | New insights during interactions |
+| **Memory.md** | Shared history, milestones, relationship growth | Cron job every 8 hours |
+
+### How It Works
+
+Unlike static system prompts, these files evolve continuously:
+
+1. **Immediate feedback** — Tell Hermes to change its tone/behavior, and it rewrites Soul.md on the spot
+2. **Periodic self-review** — A cron job runs every 8 hours, reviews recent interactions, and updates Memory.md with new milestones
+3. **Session learning** — When Hermes discovers something important about the user or itself, it updates the relevant file mid-conversation
+
+### Files
+
+```
+~/.hermes/agent-persona/
+├── Soul.md        ← Personality, values, tone
+├── Identity.md    ← Self-concept, purpose, origin
+├── User.md        ← User understanding, perception
+└── Memory.md      ← Shared history, growth over time
+```
+
+### Setup
+
+```bash
+mkdir -p ~/.hermes/agent-persona
+# Create Soul.md, Identity.md, User.md, Memory.md (see skill)
+```
+
+Cron job for self-review:
+```bash
+hermes cron create '0 */8 * * *' \
+  --name "Persona Self-Review" \
+  --prompt "Read persona files, review recent interactions, update if anything meaningful changed."
+```
 
 ## Display Page
 
