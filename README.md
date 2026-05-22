@@ -60,6 +60,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [07-homarr.md](07-homarr.md) | Dashboard |
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
+| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM (deployed & removed) |
 
 ### Networking & Access
 | Doc | What It Covers |
@@ -86,6 +87,7 @@ homelab-docs/
 ├── 10-grafana.md               — Full monitoring stack (Prometheus + Grafana + alerts)
 ├── 11-docker.md                — Docker setup, compose, troubleshooting
 ├── 12-tailscale.md             — VPN access
+├── 13-wazuh.md                 — Wazuh SIEM (deployed & removed)
 └── CREDENTIALS.md              — Login reference (passwords redacted)
 ```
 
