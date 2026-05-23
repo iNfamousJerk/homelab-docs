@@ -5,7 +5,7 @@ Real-world use: Proxmox is the hypervisor that runs ALL containers. Think of it 
 
 ## Quick Reference
 - Web UI: https://10.2.7.64:8006
-- SSH: root@10.2.7.64 (password: [REDACTED — see CREDENTIALS.md])
+- SSH: root@10.2.7.64
 - API: https://10.2.7.64:8006/api2/json
 - Hostname: pve
 

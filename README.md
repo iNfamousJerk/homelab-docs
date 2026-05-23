@@ -20,18 +20,25 @@ This homelab runs on a **Proxmox** hypervisor hosting multiple LXC containers se
 | **Management IP** | 10.2.7.64:8006 |
 | **Uptime** | ~12 days |
 
+## 🔐 Credentials
+
+**All SSH passwords and service logins are centralized in [`CREDENTIALS.md`](CREDENTIALS.md).**  
+Individual service docs reference credentials there — no passwords are stored in the public docs.
+
 ## 📦 Container Inventory
 
-| ID | Name | IP | Purpose | Status |
-|----|------|----|---------|--------|
-| 100 | hermesagent | 10.2.7.107 | AI assistant | ✅ Online |
-| 101 | Immich | 10.2.7.44 | Photo backup | ✅ Online |
-| 102 | PiAlert | 10.2.7.77 | Network monitoring | ✅ Online |
-| 103 | Homarr | 10.2.7.105 | Dashboard | ✅ Online |
-| 104 | Nextcloud | 10.2.7.99 | Cloud storage | ✅ Online |
-| 105 | Wazuh | 10.2.7.110 | SIEM manager | ✅ Online |
-| 106 | Grafana | 10.2.7.108 | Monitoring dashboards | ✅ Online |
-| 107 | Pi-hole | 10.2.7.2 | DNS + DHCP | ✅ Online |
+See **[02-containers.md](02-containers.md)** for the full container list with specs (RAM, cores, disk), or the quick table below:
+
+| ID | Name | IP | Purpose |
+|----|------|-----|---------|
+| 100 | hermesagent | 10.2.7.107 | AI assistant |
+| 101 | Immich | 10.2.7.44 | Photo backup |
+| 102 | PiAlert | 10.2.7.77 | Network monitoring |
+| 103 | Homarr | 10.2.7.105 | Dashboard |
+| 104 | Nextcloud | 10.2.7.99 | Cloud storage |
+| 105 | Wazuh | 10.2.7.110 | SIEM manager |
+| 106 | Grafana | 10.2.7.108 | Monitoring stack |
+| 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
 
 ---
 
@@ -99,7 +106,7 @@ homelab-docs/
 
 ## 🔮 Future Plans
 
-- [ ] PBS second node (Dell Optiplex SFF or similar)
+- [ ] **🏴‍☠️ Project Pirate PBS** — Dell Optiplex 7050 MT second node (see [PLANS/pirate-pbs.md](PLANS/pirate-pbs.md))
 - [ ] USB Blu-ray + auto-ripper for physical media
 - [ ] 2.5Gb network upgrade
 - [ ] VLAN segmentation

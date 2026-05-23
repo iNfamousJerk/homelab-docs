@@ -7,7 +7,7 @@ Real-world use: Nextcloud is a self-hosted Dropbox + Google Drive alternative. Y
 - Web UI: http://10.2.7.99
 - Desktop apps: Windows/Mac/Linux (download from nextcloud.com)
 - Mobile apps: iOS/Android (app stores)
-- SSH: root@10.2.7.99 (password: [REDACTED — see CREDENTIALS.md])
+- SSH: root@10.2.7.99
 
 ## User Manual
 - First login: browser → http://10.2.7.99 → enter admin credentials

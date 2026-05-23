@@ -57,7 +57,7 @@ pct resize <CT_ID> rootfs <new_size>G
 ## SSH Access
 - Hermes agent has SSH key deployed to all containers
 - Password auth also available (see CREDENTIALS.md)
-- Default root password for most CTs: [REDACTED — themed phrases, see CREDENTIALS.md]
+
 
 ## Community Scripts
 Many containers were initially set up using https://community-scripts.net - they provide one-command install scripts for popular self-hosted apps.

@@ -7,7 +7,7 @@ Real-world use: Pi-hole is a network-wide ad blocker. It sits between every devi
 ## Access
 
 - Web UI: http://10.2.7.2/admin
-- SSH: root@10.2.7.2 (password: [REDACTED — see CREDENTIALS.md])
+- SSH: root@10.2.7.2
 - DNS port: 53
 
 ## User Manual

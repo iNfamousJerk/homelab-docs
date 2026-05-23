@@ -5,7 +5,7 @@ Real-world use: Homarr is your homelab's homepage. Instead of remembering 10 dif
 
 ## Access
 - Web UI: http://10.2.7.105:7575
-- SSH: root@10.2.7.105 (password: [REDACTED — see CREDENTIALS.md])
+- SSH: root@10.2.7.105
 
 ## User Manual
 First-time setup or adding new services:
