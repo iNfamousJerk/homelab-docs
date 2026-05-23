@@ -41,6 +41,12 @@ apt update && apt upgrade -y
 ## Adding New Services to the Homelab
 When you deploy a new service, add it to Homarr so you can always find it from one place.
 
+## Custom Theme
+A cyberpunk dark theme is available in the homelab-docs repo:
+- File: `themes/homarr-cyberpunk.css`
+- Paste the entire contents into Homarr → Settings → Custom CSS → Save
+- Cyan-accent glass cards, JetBrains Mono font — matches the rest of the homelab aesthetic
+
 ## Troubleshooting
 - Dashboard not loading? Check Homarr is running
 - Widget showing red/offline? The target service might be down — check that service directly

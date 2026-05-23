@@ -1,0 +1,105 @@
+/* === Homarr Dark Cyberpunk Theme === */
+/* Paste this in Homarr → Settings → Custom CSS */
+/* Designed to match the Piper Homelab dark terminal aesthetic */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+/* Base */
+:root {
+  --accent: #00ffc8;
+  --accent-dim: rgba(0, 255, 200, 0.15);
+  --bg-card: rgba(15, 23, 42, 0.6);
+  --border: rgba(0, 255, 200, 0.12);
+  --text-muted: #64748b;
+}
+
+body, .app, .dashboard {
+  font-family: 'JetBrains Mono', monospace !important;
+  background: #020617 !important;
+}
+
+/* Cards — glass-morphism */
+.card, .board-item, .widget, .module-wrapper, [class*="category"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease !important;
+}
+
+.card:hover, .board-item:hover, .widget:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+/* Headers */
+h1, h2, h3, .title, [class*="header"], [class*="heading"] {
+  font-family: 'JetBrains Mono', monospace !important;
+  letter-spacing: -0.02em;
+}
+
+/* Accent links & icons */
+a, .link, [class*="icon"], .app-icon {
+  color: var(--accent) !important;
+  transition: all 0.2s;
+}
+
+a:hover {
+  text-shadow: 0 0 12px rgba(0, 255, 200, 0.3);
+}
+
+/* Buttons */
+button, .btn, [class*="button"] {
+  border-radius: 8px !important;
+  border: 1px solid var(--border) !important;
+  transition: all 0.2s !important;
+}
+
+button:hover, .btn:hover {
+  border-color: var(--accent) !important;
+  background: var(--accent-dim) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 255, 200, 0.15); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 200, 0.3); }
+
+/* Inputs */
+input, textarea, select, [class*="input"] {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: #e0e0e0 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.1) !important;
+  outline: none;
+}
+
+/* Status badges */
+[class*="badge"], [class*="status"] {
+  background: var(--accent-dim) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 20px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+}
+
+/* Dividers */
+hr, [class*="divider"], [class*="separator"] {
+  border-color: var(--border) !important;
+  opacity: 0.5;
+}
+
+/* Footer / branding area */
+.footer, [class*="footer"] {
+  color: var(--text-muted) !important;
+  font-size: 11px !important;
+}
