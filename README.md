@@ -37,7 +37,7 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 | 103 | Homarr | 10.2.7.105 | Dashboard |
 | 104 | Nextcloud | 10.2.7.99 | Cloud storage |
 | 105 | Wazuh | 10.2.7.110 | SIEM manager |
-| 106 | Grafana | 10.2.7.108 | Monitoring stack |
+| 106 | Grafana | 10.2.7.108 | Monitoring stack (8 Docker containers) |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
 
 ---
@@ -59,6 +59,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [10-grafana.md](10-grafana.md) | **Full monitoring stack** — Prometheus, Grafana, Alertmanager, cAdvisor, Pi-hole exporter, Discord alerts |
 | [11-docker.md](11-docker.md) | Docker install, compose commands, AppArmor fix |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM: agent-based threat detection, file integrity, vuln scanning |
+| [monitoring-stack.md](monitoring-stack.md) | **Updated Dec 2026** — 20 alert rules, blackbox exporter probes (17 targets), Discord alerting pipeline |
 
 ### Services
 | Doc | What It Covers |
@@ -67,6 +68,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [05-immich.md](05-immich.md) | Photo backup |
 | [06-pialert.md](06-pialert.md) | Network monitoring |
 | [07-homarr.md](07-homarr.md) | Dashboard |
+| [homarr-setup.md](homarr-setup.md) | **Homarr dashboard setup guide** — all services, widgets, recommended layout |
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM security monitoring (all 8 CTs) |
