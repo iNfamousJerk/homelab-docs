@@ -5,7 +5,7 @@ Real-world use: Proxmox is the hypervisor that runs ALL containers. Think of it 
 
 ## Quick Reference
 - Web UI: https://10.2.7.64:8006
-- SSH: root@10.2.7.64 (password: 2proxtheworld)
+- SSH: root@10.2.7.64 (password: [REDACTED — see CREDENTIALS.md])
 - API: https://10.2.7.64:8006/api2/json
 - Hostname: pve
 
@@ -46,8 +46,8 @@ Use PBS integration for automated backups, or manual vzdump.
 List the Proxmox API helper script that was used for PiAlert resize:
 ```bash
 # Auth script from Hermes:
-TICKET=$(curl -sk -d 'username=root@pam&password=2proxtheworld' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['ticket'])")
-CSRF=$(curl -sk -d 'username=root@pam&password=2proxtheworld' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['CSRFPreventionToken'])")
+TICKET=$(curl -sk -d 'username=root@pam&password=[SEE_CREDENTIALS_MD]' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['ticket'])")
+CSRF=$(curl -sk -d 'username=root@pam&password=[SEE_CREDENTIALS_MD]' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['CSRFPreventionToken'])")
 ```
 
 ## Logs & Monitoring

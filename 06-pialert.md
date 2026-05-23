@@ -5,7 +5,7 @@ Real-world use: PiAlert watches your network like a security camera for devices.
 
 ## Access
 - Web UI: http://10.2.7.77
-- SSH: root@10.2.7.77 (password: AlertTheNet)
+- SSH: root@10.2.7.77 (password: [REDACTED — see CREDENTIALS.md])
 
 ## User Manual
 - How to view known devices: Web UI → Devices section

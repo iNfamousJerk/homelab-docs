@@ -8,7 +8,7 @@ Real-world use: Immich replaces Google Photos / iCloud Photos. You install the a
 
 - **Web UI:** http://10.2.7.44:2283 (or via Homarr)
 - **Mobile app:** iOS/Android — available on app stores (search "Immich")
-- **SSH:** `root@10.2.7.44` (password: `MyPhotoVault`)
+- **SSH:** `root@10.2.7.44` (password: [REDACTED — see CREDENTIALS.md])
 
 ## User Manual
 

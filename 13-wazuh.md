@@ -17,7 +17,7 @@ Agents deployed on all active containers + PVE host
 ## Access
 - Dashboard: https://10.2.7.110:443
 - API: https://10.2.7.110:55000
-- SSH to manager: root@10.2.7.110 (password: wazzuhpower)
+- SSH to manager: root@10.2.7.110 (password: [REDACTED — see CREDENTIALS.md])
 
 ## User Manual
 ### View security events
