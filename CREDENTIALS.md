@@ -15,13 +15,13 @@
 | CT | Container | User | Password Theme | SSH |
 |----|-----------|------|---------------|-----|
 | 100 | Hermes Agent | hermes | N/A (AI agent) | Key-based |
-| 101 | Immich | root | [REDACTED - themed] | Key-based |
-| 102 | PiAlert | root | [REDACTED - themed] | Key-based |
-| 103 | Homarr | root | [REDACTED - themed] | Key-based |
-| 104 | Nextcloud | root | [REDACTED - themed] | Key-based |
-| 105 | Wazuh Manager | root | [REDACTED - themed] | Key-based (root@10.2.7.110) |
-| 106 | Grafana | root | [REDACTED - themed] | Key-based |
-| 107 | Pi-hole | root | [REDACTED - themed] | Key-based |
+| 101 | Immich | root | [REDACTED - lowercase themed] | Key-based |
+| 102 | PiAlert | root | [REDACTED - lowercase themed] | Key-based |
+| 103 | Homarr | root | [REDACTED - lowercase themed] | Key-based |
+| 104 | Nextcloud | root | [REDACTED - lowercase themed] | Key-based |
+| 105 | Wazuh Manager | root | [REDACTED - lowercase themed] | Key-based (root@10.2.7.110) |
+| 106 | Grafana | root | [REDACTED - lowercase themed] | Key-based |
+| 107 | Pi-hole | root | [REDACTED - lowercase themed] | Key-based |
 
 > **Note:** All passwords are themed phrases related to each container's or service's function. Stored securely in Hermes memory.
 
