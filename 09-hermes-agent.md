@@ -1,5 +1,8 @@
 # 09 - Hermes Agent
 
+## Overview
+Real-world use: Hermes is the homelab's AI assistant — it manages containers, responds to questions, sends status reports, and controls smart home devices. Access it via Discord DM, web chat, or the robot display. Think of it as your always-on sysadmin buddy that knows your homelab inside and out. Runs on CT 100 (10.2.7.107) using Hermes Agent framework backed by Nous Research models.
+
 The AI assistant running on container 107 (10.2.7.107). Provides autonomous assistant capabilities integrated with the homelab.
 
 ## Access
@@ -168,3 +171,43 @@ systemctl --user status hermes-display.service  # Should show active (running)
 Add as an **iFrame widget** pointing to `http://10.2.7.107:8080` for a live robot on your dashboard.
 
 Or add a **Custom API** widget at `http://10.2.7.107:8642/health` for a simple green checkmark status indicator.
+
+## Maintenance
+### Restart Hermes gateway
+```bash
+systemctl --user restart hermes-gateway
+```
+
+### Check gateway status
+```bash
+systemctl --user status hermes-gateway
+```
+
+### Restart robot display
+```bash
+systemctl --user restart hermes-display.service
+```
+
+### Update Hermes Agent
+```bash
+cd /home/hermes/.hermes/hermes-agent
+git pull
+```
+
+### Check cron jobs
+```bash
+hermes cron list
+```
+
+### Logs
+- Gateway logs: journalctl --user -u hermes-gateway -f
+- Display logs: journalctl --user -u hermes-display.service -f
+- Session history: stored in ~/.hermes/sessions/
+
+## Files & Config
+- Config: ~/.hermes/config.yaml
+- Environment: ~/.hermes/.env
+- Persona: ~/.hermes/agent-persona/ (Soul.md, Identity.md, User.md, Memory.md)
+- Skills: ~/.hermes/skills/
+
+The Hermes-evolution repo (github.com/iNfamousJerk/Hermes-evolution) tracks all persona changes.

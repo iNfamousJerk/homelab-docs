@@ -1,101 +1,62 @@
-# 01 - Proxmox Server
+# 01 - Proxmox VE
 
-## Hardware
+## Overview
+Real-world use: Proxmox is the hypervisor that runs ALL containers. Think of it as the landlord of the apartment building — every container lives inside it. Real-world use: running multiple isolated services on one physical machine, ability to snapshot/backup/restore any container, hot-resize resources.
 
-- **CPU:** Intel i5-7500 @ 3.40GHz (4 cores)
-- **RAM:** 31.2 GB total
-- **Storage:** ~94 GB on local-lvm (LVM thin pool)
-- **OS:** Proxmox Virtual Environment 9.1.1
+## Quick Reference
+- Web UI: https://10.2.7.64:8006
+- SSH: root@10.2.7.64 (password: 2proxtheworld)
+- API: https://10.2.7.64:8006/api2/json
+- Hostname: pve
 
-## Networking
+## User Manual
+- How to access web UI (browser → https://10.2.7.64:8006)
+- How to check container list (pct list from SSH)
+- How to SSH into a container (pct enter <CT_ID>)
+- How to view logs (pct logs <CT_ID>)
+- How to check resource usage (Web UI → Node → Summary)
 
-- **Hostname:** pve
-- **Web UI:** https://10.2.7.64:8006
-- **Subnet:** 10.2.7.0/24
-- **Gateway:** 10.2.7.1 (OPNsense)
-
-## API Access
-
-The Proxmox API is accessible at:
-
-```
-POST https://10.2.7.64:8006/api2/json/access/ticket
-```
-
-Authentication payload:
-```json
-{
-  "username": "root@pam",
-  "password": "<password>"
-}
-```
-
-Returns a ticket (cookie) and CSRFPreventionToken for subsequent requests.
-
-### Useful API Commands
-
+## Maintenance
+### Update Proxmox itself
 ```bash
-# List all containers
-curl -k -b "PVEAuthCookie=$TICKET" \
-  https://10.2.7.64:8006/api2/json/nodes/pve/lxc
-
-# Get container config
-curl -k -b "PVEAuthCookie=$TICKET" \
-  https://10.2.7.64:8006/api2/json/nodes/pve/lxc/103/config
-
-# Get node status
-curl -k -b "PVEAuthCookie=$TICKET" \
-  https://10.2.7.64:8006/api2/json/nodes/pve/status
-
-# Full auth example
-TICKET=$(curl -sk -d 'username=root@pam&password=YOUR_PASSWORD' \
-  https://10.2.7.64:8006/api2/json/access/ticket | \
-  python3 -c "import sys,json; print(json.load(sys.stdin)['data']['ticket'])")
-```
-
-## Creating an LXC Container
-
-This is the **exact flow** for deploying a new LXC container:
-
-```bash
-# 1️⃣ SSH into the Proxmox host
 ssh root@10.2.7.64
+apt update && apt dist-upgrade -y
+```
+Then reboot if kernel was updated.
 
-# 2️⃣ Download a template (if you don't have one)
-pveam update
-pveam download local ubuntu-24.04-standard_24.04-2_amd64.tar.zst
-
-# 3️⃣ Create the container
-pct create 107 local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst \
-  --hostname my-new-service \
-  --storage local-lvm \
-  --rootfs local-lvm:8 \
-  --memory 2048 \
-  --cores 2 \
-  --net0 name=eth0,bridge=vmbr0,gw=10.2.7.1,ip=10.2.7.109/24 \
-  --unprivileged 1 \
-  --features nesting=1,keyctl=1 \
-  --onboot 1 \
-  --password YOUR_CONTAINER_PASSWORD
-
-# 4️⃣ Start it
-pct start 107
-
-# 5️⃣ SSH into the container (from the PVE host)
-pct enter 107
-# Or from outside PVE:
-# ssh root@10.2.7.109
-
-# 6️⃣ Update and install basics
-apt update && apt upgrade -y
-apt install -y curl wget git ufw
+### Resize a container disk
+```bash
+pct resize <CT_ID> rootfs <new_size>G
+# Then expand filesystem inside:
+pct enter <CT_ID>
+resize2fs /dev/sda1  # for ext4
+# Or reboot the container
 ```
 
-## Resource Usage
+### Snapshot before risky changes
+```bash
+pct snapshot <CT_ID> before-update --description "Before XYZ change"
+# Rollback: pct rollback <CT_ID> before-update
+```
 
-| Resource | Usage |
-|----------|-------|
-| CPU | ~3% idle |
-| RAM | ~19% |
-| Disk | ~14% |
-| Swap | ~4% |
+### Backup container
+Use PBS integration for automated backups, or manual vzdump.
+
+## Helper Scripts
+List the Proxmox API helper script that was used for PiAlert resize:
+```bash
+# Auth script from Hermes:
+TICKET=$(curl -sk -d 'username=root@pam&password=2proxtheworld' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['ticket'])")
+CSRF=$(curl -sk -d 'username=root@pam&password=2proxtheworld' https://10.2.7.64:8006/api2/json/access/ticket | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['CSRFPreventionToken'])")
+```
+
+## Logs & Monitoring
+- System logs: /var/log/syslog, /var/log/pve*
+- Container logs: pct logs <CT_ID>
+- VM logs: qm logs <VM_ID>
+- Grafana dashboard monitors: CPU, RAM, disk via node_exporter (installed on host)
+
+## Troubleshooting
+- Can't reach Web UI? Check if pveproxy is running: systemctl status pveproxy
+- Container won't start? pct start <CT_ID> --debug for verbose output
+- Disk full? Check: df -h, then pct resize if needed

@@ -1,6 +1,14 @@
 # 10 - Grafana & Prometheus
 
-Monitoring stack deployed on container 106 (10.2.7.108) for visualizing homelab metrics.
+## Overview
+Real-world use: Grafana turns server metrics into visual dashboards. Instead of SSHing into a machine and running top/df to check if things are OK, you open a dashboard and see everything at once — CPU usage, disk space, memory, network traffic — all in colorful graphs with alert notifications when something's wrong. Pairing it with Prometheus (which collects the data) means you get historical trends too: "Was the disk always at 80%, or did it fill up overnight?"
+
+This stack runs on CT 106 (10.2.7.108) and monitors:
+- PVE host CPU/RAM/disk (via node_exporter on .64)
+- CT 106 itself (via node_exporter on .108)
+- All Docker containers (via cAdvisor)
+- Pi-hole DNS queries (via pihole-exporter)
+- Alerts sent to Discord via webhook
 
 ## Services
 
@@ -492,4 +500,35 @@ docker compose -f /opt/monitoring/docker-compose.yml logs -f
 # Grafana login reset
 docker compose -f /opt/monitoring/docker-compose.yml exec grafana \
   grafana-cli admin reset-admin-password NEWPASSWORD
+```
+
+## Maintenance
+### Update Docker images
+```bash
+pct enter 106  # or ssh root@10.2.7.108
+cd /opt/monitoring
+docker compose pull
+docker compose up -d
+```
+
+### Restart after config change
+```bash
+docker compose restart prometheus  # for prometheus.yml changes
+docker compose restart grafana     # for provisioning changes
+```
+
+### Grafana admin password reset
+```bash
+docker compose exec grafana grafana-cli admin reset-admin-password NewPassword
+```
+
+### Check all services
+```bash
+docker compose ps
+```
+
+### Logs
+```bash
+docker compose logs -f            # all services
+docker compose logs grafana -f    # one service
 ```

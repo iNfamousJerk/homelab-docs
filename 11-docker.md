@@ -1,5 +1,8 @@
 # 11 - Docker Setup
 
+## Overview
+Real-world use: Docker lets you run applications in isolated containers without setting up full virtual machines. Each app gets its own sandbox with its own dependencies. Think of it like shipping containers — you put an app + everything it needs in one box, and it runs identically on any machine. On this homelab, Docker runs the monitoring stack (Grafana, Prometheus, Alertmanager, cAdvisor, Pi-hole exporter, webhook) on CT 106.
+
 Docker is installed on container 106 (Grafana, 10.2.7.108) running Ubuntu 24.04.
 
 ## How to Install Docker (Step by Step)
@@ -127,3 +130,33 @@ volumes:
 volumes:
   - /opt/monitoring/config.yml:/etc/app/config.yml:ro
 ```
+
+## Maintenance
+### Update Docker images (pull latest)
+```bash
+cd /opt/monitoring
+docker compose pull
+docker compose up -d
+```
+
+### Clean up old images (save disk space)
+```bash
+docker image prune -a -f
+```
+
+### Check Docker disk usage
+```bash
+docker system df
+```
+
+### Restart Docker service (if things are hung)
+```bash
+systemctl restart docker
+```
+
+## Logs
+- Docker container logs: docker logs <container_name>
+- Compose stack logs: docker compose -f /opt/monitoring/docker-compose.yml logs -f
+- Docker daemon logs: journalctl -u docker.service
+
+The Grafana doc (10-grafana.md) has full details on the monitoring stack specifically.

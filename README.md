@@ -24,11 +24,12 @@ This homelab runs on a **Proxmox** hypervisor hosting multiple LXC containers se
 
 | ID | Name | IP | Purpose | Status |
 |----|------|----|---------|--------|
-| 100 | Hermes Agent | 10.2.7.107 | AI assistant | ✅ Online |
+| 100 | hermesagent | 10.2.7.107 | AI assistant | ✅ Online |
 | 101 | Immich | 10.2.7.44 | Photo backup | ✅ Online |
 | 102 | PiAlert | 10.2.7.77 | Network monitoring | ✅ Online |
 | 103 | Homarr | 10.2.7.105 | Dashboard | ✅ Online |
 | 104 | Nextcloud | 10.2.7.99 | Cloud storage | ✅ Online |
+| 105 | Wazuh | 10.2.7.110 | SIEM manager | ✅ Online |
 | 106 | Grafana | 10.2.7.108 | Monitoring dashboards | ✅ Online |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP | ✅ Online |
 
@@ -50,6 +51,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 |-----|----------------|
 | [10-grafana.md](10-grafana.md) | **Full monitoring stack** — Prometheus, Grafana, Alertmanager, cAdvisor, Pi-hole exporter, Discord alerts |
 | [11-docker.md](11-docker.md) | Docker install, compose commands, AppArmor fix |
+| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM: agent-based threat detection, file integrity, vuln scanning |
 
 ### Services
 | Doc | What It Covers |
@@ -60,7 +62,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [07-homarr.md](07-homarr.md) | Dashboard |
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
-| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM (fully removed May 2026) |
+| [13-wazuh.md](13-wazuh.md) | Wazuh SIEM security monitoring (all 8 CTs) |
 
 ### Networking & Access
 | Doc | What It Covers |
@@ -91,16 +93,14 @@ homelab-docs/
 ├── 10-grafana.md               — Full monitoring stack (Prometheus + Grafana + alerts)
 ├── 11-docker.md                — Docker setup, compose, troubleshooting
 ├── 12-tailscale.md             — VPN access
-├── 13-wazuh.md                 — Wazuh SIEM (deployed & removed)
+├── 13-wazuh.md                 — Wazuh SIEM security monitoring
 └── CREDENTIALS.md              — Login reference (passwords redacted)
 ```
 
 ## 🔮 Future Plans
 
-- [ ] Voice-activated assistant (Raspberry Pi + mic/speaker)
-- [ ] Animated Hermes display screen
-- [ ] Portainer for Docker management
-- [ ] Nginx Proxy Manager
+- [ ] PBS second node (Dell Optiplex SFF or similar)
+- [ ] USB Blu-ray + auto-ripper for physical media
+- [ ] 2.5Gb network upgrade
+- [ ] VLAN segmentation
 - [ ] More Grafana dashboards
-- [ ] Automated backups
-- [ ] VLAN segmentation (IoT / management / trusted)

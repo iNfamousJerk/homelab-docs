@@ -1,73 +1,87 @@
 # 13 - Wazuh SIEM
 
-Wazuh is a free, open-source security information and event management (SIEM) platform. It provides threat detection, integrity monitoring, incident response, and compliance management.
+## Overview
+Real-world use: Wazuh is a security camera system for your servers. It watches every login attempt, every file change, every running process, and every installed package. When something suspicious happens (SSH brute force, modified system binary, known vulnerability in a package), it alerts you. Think of it as a 24/7 security guard for your homelab.
 
-## Initial Setup (CT 106 — Grafana Container)
+## Architecture
+Manager: CT 105 (10.2.7.110) — 4GB RAM, 4 cores
+Agents deployed on all active containers + PVE host
 
-Wazuh was initially deployed on CT 106 (Grafana, 10.2.7.108) alongside the monitoring stack using the official Docker images.
+| Component | Where | Purpose |
+|-----------|-------|---------|
+| Wazuh Manager | CT 105 (.110) | Collects and analyzes events |
+| Wazuh Dashboard | https://10.2.7.110:443 | Web UI for alerts, agents, vulns |
+| Wazuh Indexer | CT 105 (.110:9200) | Stores event data |
+| Agent (x8) | Every CT + PVE | Ships logs, file changes, vuln data |
 
-### Deployment Steps
+## Access
+- Dashboard: https://10.2.7.110:443
+- API: https://10.2.7.110:55000
+- SSH to manager: root@10.2.7.110 (password: wazzuhpower)
 
+## User Manual
+### View security events
+Dashboard → Security Events module → filter by rule level
+- Level 0-3: Info
+- Level 4-7: Warning
+- Level 8-10: Suspicious (SSH brute force attempts, new services)
+- Level 11-14: Attack detected
+- Level 15+: Severe (confirmed compromise)
+
+### Check agent status
+Dashboard → Agents module → shows all 8 agents with last keepalive
+Gray = disconnected, Green = active
+
+### View vulnerabilities
+Dashboard → Vulnerabilities → shows CVEs detected on any monitored system
+
+### Check file changes
+Dashboard → Integrity Monitoring → shows what files changed and when
+
+## Agent Deployment (for future new CTs)
 ```bash
-# Clone the Wazuh Docker repo with a stable release tag
-git clone https://github.com/wazuh/wazuh-docker.git
-cd wazuh-docker && git checkout v4.14.5
+# Add Wazuh repo
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-tty --yes --dearmor > /usr/share/keyrings/wazuh.gpg
+echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" > /etc/apt/sources.list.d/wazuh.list
+apt-get update
 
-# Generate certificates manually (cert-generator Docker fails in unprivileged LXC)
-mkdir -p config/wazuh_indexer_ssl_certs/
+# Install
+apt-get install -y wazuh-agent
 
-# Fix AppArmor for LXC
-# Add to each service in docker-compose.yml:
-#   security_opt:
-#     - apparmor=unconfined
+# Configure manager address
+sed -i 's/MANAGER_IP/10.2.7.110/g' /var/ossec/etc/ossec.conf
+
+# Start
+systemctl enable --now wazuh-agent
 ```
 
-### Exposed Ports (on CT 106)
-
-| Service | Port |
-|---------|------|
-| Wazuh Dashboard UI | `https://10.2.7.108:443` |
-| Wazuh Indexer API | `https://10.2.7.108:9200` |
-| Wazuh Manager API | `10.2.7.108:55000` |
-| Agent enrollment | `10.2.7.108:1515` |
-| Agent events | `10.2.7.108:1514` |
-| Syslog | `10.2.7.108:514/udp` |
-
-## Dedicated Container (CT 108 — Hermes-Wazuh)
-
-A dedicated container (CT 108) was later provisioned to run Wazuh independently from the Grafana monitoring stack to avoid resource contention. It used the same deployment process but with more RAM/disk allocated.
-
-## Full Removal (May 2026)
-
-Wazuh has been **fully removed from the homelab** — both CT 108 (dedicated container) and the Docker deployment on CT 106 were cleaned up:
-
-| Step | Detail |
-|------|--------|
-| CT 108 | Proxmox container destroyed via API |
-| CT 106 Docker | 3 containers, 13 volumes, 5 images (~9 GB) removed |
-| Wazuh directory | `/opt/wazuh-docker/` deleted |
-
-Reasons:
-- Resource requirements (~2.5 GB RAM for indexer + manager + dashboard) were too high for the available 32 GB host
-- Agent deployment and management overhead outweighed the security monitoring benefits for this small homelab
-- Existing monitoring stack (Grafana + Prometheus + PiAlert) already covers most visibility needs
-
-## Agent Installation (for reference)
-
-If Wazuh is re-deployed in the future, install agents on any container:
-
+## Maintenance
+### Update Wazuh manager
 ```bash
-curl -s https://packages.wazuh.com/4.x/keys/GPG-KEY-WAZUH | apt-key add -
-echo "deb https://packages.wazuh.com/4.x/apt/ stable main" > /etc/apt/sources.list.d/wazuh.list
-apt-get update && apt-get install -y wazuh-agent
-/var/ossec/bin/agent-auth -m <WAZUH_MANAGER_IP> -p 1515
-sed -i 's/MANAGER_IP/<WAZUH_MANAGER_IP>/' /var/ossec/etc/ossec.conf
-systemctl enable wazuh-agent && systemctl start wazuh-agent
+pct enter 105
+apt update && apt upgrade -y
+# Check services: systemctl status wazuh-manager wazuh-indexer wazuh-dashboard
 ```
 
-## Notes
+### Update agents
+Can be done centrally via Wazuh dashboard, or per-container:
+```bash
+pct exec <CT_ID> -- apt update && apt upgrade -y
+```
 
-- **Wazuh is heavy** — a full Wazuh cluster (indexer + manager + dashboard) needs ~3 GB RAM minimum
-- **Use stable tags only** — the `main` branch tracks 5.0.0-dev whose Docker images may not exist
-- **Certificate generation** is the trickiest part in unprivileged LXC — the cert-generator container fails due to AppArmor; generate certs manually with openssl
-- **Consider alternatives** for lightweight SIEM: Guardian (single-binary), or just rely on PiAlert + Grafana alerts
+### Restart services
+```bash
+pct enter 105
+systemctl restart wazuh-manager
+```
+
+## Logs
+- Manager logs: /var/ossec/logs/ossec.log
+- Agent logs: /var/ossec/logs/ossec.log inside each container
+- Dashboard: check web UI events
+
+## Troubleshooting
+- Agent shows as disconnected? Check agent can reach manager: curl -k https://10.2.7.110:55000
+- Agent not sending events? systemctl status wazuh-agent on the agent
+- Manager not receiving? Check port 1514/udp is open on manager: ss -tulpn | grep 1514
+- Too many alerts? Use dashboard filters to focus on level 8+ events only
