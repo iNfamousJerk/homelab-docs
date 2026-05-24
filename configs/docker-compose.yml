@@ -28,13 +28,26 @@ services:
     privileged: true
     restart: unless-stopped
 
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    ports:
+      - 9115:9115
+    command:
+      - '--config.file=/config/blackbox.yml'
+    volumes:
+      - /opt/monitoring/blackbox.yml:/config/blackbox.yml:ro
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - 3000:3000
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=ChangeMe123
+      - GF_SECURITY_ADMIN_PASSWORD=***
     volumes:
       - grafana_data:/var/lib/grafana
       - /opt/monitoring/provisioning/:/etc/grafana/provisioning/:ro
@@ -50,9 +63,26 @@ services:
       - 9617:9617
     environment:
       - PIHOLE_HOSTNAME=10.2.7.209
-      - PIHOLE_PASSWORD=PiHoleIsKing
+      - PIHOLE_PASSWORD=***
       - PIHOLE_PROTOCOL=http
       - PIHOLE_PORT=80
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+
+  nut-exporter:
+    image: python:3-alpine
+    container_name: nut-exporter
+    ports:
+      - 9999:9999
+    environment:
+      - NUT_HOST=10.2.7.64
+      - NUT_PORT=3493
+      - NUT_USER=monitor
+      - NUT_PASSWORD=upsmonitor
+    volumes:
+      - /opt/monitoring/nut_exporter.py:/app/exporter.py:ro
+    command: python /app/exporter.py
     restart: unless-stopped
     security_opt:
       - apparmor:unconfined
@@ -75,7 +105,23 @@ services:
       - 5000:5000
     volumes:
       - /opt/monitoring/webhook/receiver.py:/app/receiver.py:ro
-    command: python /app/receiver.py
+    command: python -u /app/receiver.py
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    ports:
+      - 8081:80
+    environment:
+      - ADMIN_TOKEN=***
+      - SIGNUPS_ALLOWED=false
+      - DOMAIN=https://vaultwarden.home.lan
+    volumes:
+      - vaultwarden_data:/data
     restart: unless-stopped
     security_opt:
       - apparmor:unconfined
@@ -83,3 +129,4 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
+  vaultwarden_data:
