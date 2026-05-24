@@ -14,6 +14,8 @@ Phase 2 of the homelab: Add a second PVE node for the media stack, a dedicated P
 - **PVE1** (existing) — CTs 100–107, stays as-is
 - **PVE2** (new HP ProDesk) — CT 108: Docker media stack (Radarr, Sonarr, Prowlarr, qBittorrent, Jellyfin) + 2×1TB RAID for media
 - **PBS** (new HP ProDesk) — Proxmox Backup Server, 2×2TB ZFS mirror for backups
+- **Router** — Zimaboard 2 (replaces Optiplex OPNsense), 2.5Gb capable
+- **Ripper** — Former OPNsense Optiplex → Automatic Ripping Machine + USB Blu-ray
 - **Network** — Managed switch + patch panel + rack shelf + WiFi AP for IoT & Guest VLANs
 
 ---
@@ -163,14 +165,17 @@ Clean up the spaghetti, get the HP ProDesks rack-mounted, and give everything a 
 ```
 ┌─ Wall jack ──→ Patch Panel ──→ Switch ──→ PVE1, PVE2, PBS, etc.
                     │                            │
-                    │                            ├── OPNsense (router)
+                    │                            ├── Zimaboard 2 (2.5Gb router)
+                    │                            ├── Ripper (ex-OPNsense Optiplex)
                     │                            ├── All CTs
-                    │                            └── Future: AP
+                    │                            └── WiFi AP
                     │
                     └── Shelf rack unit(s)
+                         ├── Zimaboard 2 (tiny, on shelf)
                          ├── PVE1 (existing)
                          ├── PVE2 (new ProDesk)
-                         └── PBS (new ProDesk)
+                         ├── PBS (new ProDesk)
+                         └── Ripper Optiplex (on shelf)
 ```
 
 ### Key Decisions
@@ -248,21 +253,144 @@ Add a wireless access point with VLAN-separated SSIDs for IoT devices and guest 
 |-------|-----|
 | Guest WiFi slow | Throttle via OPNsense traffic shaper |
 | IoT devices can't reach internet | Check VLAN 20 has NAT rule and proper gateway on OPNsense |
-| mDNS not working across VLANs | Set up Avahi/reflector on OPNsense or a dedicated CT for AirPlay/Chromecast bridging |
+| mDNS not working across VLANs | Set up Avahi/reflector on Zimaboard 2 or a dedicated CT for AirPlay/Chromecast bridging |
 
 ---
 
-## Data Flow (End-to-End)
+## Part 5: DVD/Blu-ray Ripper — Getting Rips to Jellyfin
+
+### Goal
+
+Repurpose the former OPNsense Optiplex into an automatic disc ripper. When a disc is inserted, it rips it, converts it, and delivers the media file to Jellyfin's library on PVE2.
+
+### Architecture
 
 ```
-Torrent download                          Jellyfin stream
-      │                                        ▲
-      ▼                                        │
-┌─ qBittorrent ─┐    ┌─ Radarr/Sonarr ─┐    ┌─ Jellyfin ──────┐
-│  (VPN tunnel) │───→│  rename +        │───→│  (local LAN)    │
-│  downloads/   │    │  organize        │    │  reads from     │
-│  incomplete/  │    │  /mnt/media/     │    │  /mnt/media/    │
-└───────────────┘    └─────────────────┘    └─────────────────┘
+USB Blu-ray drive
+       │
+       ▼
+┌─ Ripper (ex-OPNsense Optiplex) ──────────────┐
+│                                                │
+│  ARM (Automatic Ripping Machine)               │
+│                                                │
+│  Disc inserted ──→ udev trigger ──→ MakeMKV    │
+│                                         │      │
+│                                         ▼      │
+│                                    HandBrake   │
+│                                    (optional)   │
+│                                         │      │
+│                                         ▼      │
+│                           ┌─────────────────┐  │
+│                           │ Post-rip script  │  │
+│                           │                  │  │
+│                           │ rsync or cp to   │  │
+│                           │ NFS mount/Jelly  │  │
+│                           │ fin media folder  │  │
+│                           └────────┬─────────┘  │
+└────────────────────────────────────┼────────────┘
+                                     │
+                                     ▼
+                   ┌─ PVE2: /mnt/media/Movies ─┐
+                   │                           │
+                   │   Jellyfin scans folder    │
+                   │   New movie appears        │
+                   └───────────────────────────┘
+```
+
+**Key insight:** The ripper and Jellyfin are separate physical machines. The ripper writes to Jellyfin's storage over the network. There are two clean ways to do this.
+
+### Option A: NFS Export from PVE2 (Recommended)
+
+**How it works:**
+1. PVE2 exports its media ZFS pool via NFS
+2. Ripper mounts the NFS share at `/mnt/jellyfin-media/Movies`
+3. ARM writes finished rips directly to that share
+4. Jellyfin sees the file immediately (no manual transfer needed)
+
+**Setup:**
+```
+# On PVE2 — export the media dataset via NFS
+apt install nfs-kernel-server
+zfs set sharenfs="rw=@10.2.7.0/24,no_subtree_check" media/media
+
+# On Ripper — mount it permanently
+echo "10.2.7.x:/media/media /mnt/jellyfin-media nfs defaults 0 0" >> /etc/fstab
+mount -a
+```
+
+**Pros:** Real-time, automated, no double-storage. Rip writes directly to Jellyfin.
+**Cons:** NFS adds a network dependency. If PVE2 is down, rips fail.
+
+### Option B: Rsync Post-Rip Script
+
+**How it works:**
+1. Ripper rips to local storage first (e.g., `/mnt/ripper-staging/`)
+2. ARM calls a post-rip script that `rsync`s the file to PVE2's media folder
+3. Script verifies checksum before deleting local copy
+
+```bash
+#!/bin/bash
+# /usr/local/bin/arm-postrip.sh — runs after ARM finishes
+DEST="10.2.7.x:/mnt/media/Movies"
+rsync -av --remove-source-files "$1" "$DEST/"
+```
+
+**Pros:** Works even if PVE2 is temporarily offline (rip stays local). No NFS config needed.
+**Cons:** Needs enough local storage for staging. Extra step.
+
+### Key Decisions — Ripper
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Ripping software | **ARM (Automatic Ripping Machine)** | Detects disc, auto-rips, runs post-rip actions. Proven. |
+| Disc drive | **USB Blu-ray (LG WH16NS60 or similar)** | Reads both DVDs and Blu-rays. UHD-friendly. |
+| Video codec | **MakeMKV (raw) + optional HandBrake (compressed)** | MakeMKV dumps perfect copy. HandBrake shrinks for storage. |
+| Delivery method | **NFS mount (Option A)** | Real-time, no staging storage needed, simpler automation |
+| Ripper OS | **Ubuntu Server / Debian** | ARM packages are Linux-native. Lightweight. |
+
+### Implementation Plan
+
+1. Wipe the former OPNsense Optiplex, install Debian/Ubuntu Server
+2. Install ARM: `apt install arm` or via docker
+3. Configure ARM to watch the Blu-ray drive for disc insertion
+4. (For NFS) Export `/mnt/media/Movies` from PVE2, mount on ripper
+5. Configure ARM post-rip to write to PVE2's Movies folder
+6. Test: insert a DVD, verify movie appears in Jellyfin
+
+### Pitfalls
+
+| Issue | Fix |
+|-------|-----|
+| ARM doesn't detect disc insertion | Add udev rule: `SUBSYSTEM=="block", KERNEL=="sr[0-9]*", ACTION=="change", RUN+="/usr/bin/arm"` |
+| MakeMKV needs libaacs keys | Copy `KEYDB.cfg` to `/home/arm/.MakeMKV/` for encrypted Blu-rays |
+| NFS permission issues | Ensure ARM user ID matches jellyfin user ID on PVE2, or use `no_root_squash` on NFS export |
+| Large rip takes hours | ARM can send notification on completion. Or just check Jellyfin next day. |
+| Blu-ray menu structure complex | ARM's MakeMKV integration handles most discs. Problem discs: use MakeMKV GUI manually. |
+
+---
+
+```
+Torrent download / Disc rip                      Jellyfin stream
+      │        │                                        ▲
+      ▼        ▼                                        │
+┌─ qBittorrent ─┐    ┌─────────────┐    ┌─ Ripper ───────┐
+│  (VPN tunnel) │    │  Radarr/    │    │  ARM + MakeMKV │
+│  downloads/   │    │  Sonarr    │    │  USB Blu-ray   │
+│  incomplete/  │    │  organize  │    │       │        │
+└───────┬───────┘    └─────┬───────┘    └───────┼────────┘
+        │                  │                    │ (NFS mount)
+        ▼                  ▼                    ▼
+┌──────────────────────────────────────────────────────┐
+│              /mnt/media/ (2×1TB ZFS mirror)          │
+│         Movies/  TV Shows/  Music/  etc.            │
+└────────────────────┬─────────────────────────────────┘
+                     │
+                     ▼
+              ┌─ Jellyfin ──────┐
+              │  (local LAN)    │
+              │  reads all media│
+              │  no VPN needed  │
+              └─────────────────┘
                            │
                            ▼
                     ┌─ PBS Backup ─────┐
@@ -281,35 +409,44 @@ Torrent download                          Jellyfin stream
 
 | Item | Qty | Rough Cost | Notes |
 |------|-----|------------|-------|
-| HP ProDesk 400/600 G3-G5 (i5, 8GB+) | 2 | ~$100-150 each | Check eBay/local surplus |
+| **Zimaboard 2** (2.5Gb router) | 1 | ~$200 | Replaces OPNsense Optiplex. 2.5Gb NICs. |
+| HP ProDesk 400/600 G3-G5 (i5, 8GB+) | 2 | ~$100-150 each | PVE2 + PBS. Check eBay/local surplus. |
+| USB Blu-ray drive (LG WH16NS60) | 1 | ~$60-80 | For ripper. Reads DVD + Blu-ray + UHD. |
 | 1TB SATA HDD (for PVE2 media) | 2 | ~$25-40 each | NAS-rated preferred (WD Red, Seagate IronWolf) |
 | 2TB SATA HDD (for PBS) | 2 | ~$40-60 each | For backups |
 | 256GB SSD (boot drives) | 2 | ~$20-30 each | PVE2 + PBS boot. NVMe if slot available |
 | 2U vented rack shelf | 1 | ~$20-30 | Amazon basics or similar |
 | 24-port patch panel | 1 | ~$20-30 | Cat6 keystone type |
-| Managed switch (16-24 port) | 1 | ~$50-150 | TP-Link TL-SG1024D (~$50) or UBNT USW-Lite-16-PoE (~$200) |
+| Managed switch (16-24 port) | 1 | ~$50-200 | Non-PoE ~$50 (TL-SG1024D). PoE ~$200 (UBNT USW-Lite-16-PoE) |
 | Cat6 patch cables (0.5ft-1ft) | ~24-pack | ~$15-20 | Amazon basics |
 | WiFi AP (U6 Lite / EAP610) | 1 | ~$60-100 | PoE-capable for clean install |
-| **Estimated total** | | **~$450-800** | Depends on switch choice & ProDesk deals |
+| **Estimated total** | | **~$800-1,100** | Zimaboard is the biggest variable |
 
 ---
 
 ## Migration Path
 
-### Phase 1: Network Refresh (1 day)
+### Phase 1: Zimaboard 2 Router Swap (1-2 hours)
+1. Install OPNsense on Zimaboard 2 (boot from eMMC or SSD)
+2. Migrate config from Optiplex OPNsense → Zimaboard (export/import XML)
+3. Swap cables: WAN from Optiplex → Zimaboard, LAN from Optiplex → Zimaboard
+4. Verify all services still reachable
+5. Wipe the Optiplex — it's now the ripper
+
+### Phase 2: Network Refresh (1 day)
 1. Mount patch panel + switch + shelf in rack
 2. Wire everything up
 3. Cable manage
 4. Verify all existing services still work
 
-### Phase 2: PBS Setup (1-2 hours)
-1. Install PBS on fresh HP ProDesk
+### Phase 3: PBS Setup (1-2 hours)
+1. Install PBS on first HP ProDesk
 2. Configure ZFS + datastore
 3. Link PVE1 to PBS
 4. Set up backup jobs
 5. **Restore drill:** restore a small CT from PBS to verify
 
-### Phase 3: PVE2 + Media Stack (2-3 hours)
+### Phase 4: PVE2 + Media Stack (2-3 hours)
 1. Install PVE on second HP ProDesk
 2. Create ZFS media pool
 3. Create CT 108 with bind mount
@@ -319,8 +456,15 @@ Torrent download                          Jellyfin stream
 7. Link PVE2 to PBS
 8. Back up CT 108
 
-### Phase 4: WiFi Segmentation (1-2 hours)
-1. Set up VLANs on OPNsense
+### Phase 5: Ripper Setup (1-2 hours)
+1. Install Debian/Ubuntu on former OPNsense Optiplex
+2. Install ARM + MakeMKV + HandBrake
+3. Export NFS from PVE2 /mnt/media
+4. Mount NFS on ripper
+5. Test: rip a disc, verify in Jellyfin
+
+### Phase 6: WiFi Segmentation (1-2 hours)
+1. Set up VLANs on Zimaboard 2 (OPNsense)
 2. Configure switch trunk port
 3. Mount AP and configure SSIDs
 4. Test isolation
