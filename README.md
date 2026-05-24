@@ -77,6 +77,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | Doc | What It Covers |
 |-----|----------------|
 | [12-tailscale.md](12-tailscale.md) | VPN access setup |
+| [14-ups-monitoring.md](14-ups-monitoring.md) | UPS monitoring — NUT, Prometheus, Grafana, Discord alerts |
 | [CREDENTIALS.md](CREDENTIALS.md) | Login reference (passwords redacted) |
 
 ---
@@ -103,6 +104,7 @@ homelab-docs/
 ├── 11-docker.md                — Docker setup, compose, troubleshooting
 ├── 12-tailscale.md             — VPN access
 ├── 13-wazuh.md                 — Wazuh SIEM security monitoring
+├── 14-ups-monitoring.md        — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
 └── CREDENTIALS.md              — Login reference (passwords redacted)
 ```
 
