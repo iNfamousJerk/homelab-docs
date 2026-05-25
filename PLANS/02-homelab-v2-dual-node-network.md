@@ -12,8 +12,8 @@ Phase 2 of the homelab: Add a second PVE node for the media stack, a dedicated P
 
 **End state:**
 - **PVE1** (existing) — CTs 100–107, stays as-is
-- **PVE2** (new HP ProDesk) — CT 108: Docker media stack (Radarr, Sonarr, Prowlarr, qBittorrent, Jellyfin) + 2×1TB RAID for media
-- **PBS** (new HP ProDesk) — Proxmox Backup Server, 2×2TB ZFS mirror for backups
+- **PVE2** (new HP ProDesk) — CT 108: Docker media stack (Radarr, Sonarr, Prowlarr, qBittorrent, Jellyfin) + 2×2TB ZFS mirror for media (repurposed from PBS)
+- **PBS** (existing Z230) — Proxmox Backup Server, 2×4TB ZFS mirror for backups (new drives)
 - **Router** — Zimaboard 2 (replaces Optiplex OPNsense), 2.5Gb capable
 - **Ripper** — Former OPNsense Optiplex → Automatic Ripping Machine + USB Blu-ray
 - **Network** — Managed switch + patch panel + rack shelf + WiFi AP for IoT & Guest VLANs
@@ -44,7 +44,7 @@ A dedicated Proxmox node that hosts CT 108 with the Docker-based media automatio
 │  │  │         (local only, no VPN)                │    │  │
 │  │  └─────────────────────────────────────────────┘    │  │
 │  │                                                     │  │
-│  │  Bind mount: /mnt/media (2×1TB RAID) ←────────────┘  │
+│  │  Bind mount: /mnt/media (2×2TB ZFS mirror) ←──────────┘  │
 │  │                                                     │  │
 │  └─────────────────────────────────────────────────────┘  │
 │                                                           │
@@ -55,7 +55,7 @@ A dedicated Proxmox node that hosts CT 108 with the Docker-based media automatio
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Media storage | **ZFS mirror (2×1TB)** | Redundancy, snapshots, easy expand later |
+| Media storage | **ZFS mirror (2×2TB)** | Redundancy, snapshots, enough space for 1080p library |
 | Docker host | **LXC (CT 108)** | Isolated from hypervisor, portable, PBS-backable |
 | VPN container | **Gluetun** | Most maintained Docker VPN gateway. Built-in kill switch. |
 | VPN protocol | **WireGuard** | Faster than OpenVPN. NordVPN supports it natively. |
@@ -69,7 +69,7 @@ A dedicated Proxmox node that hosts CT 108 with the Docker-based media automatio
 | Machine | HP ProDesk 400/600 G3-G5 (i5-6500 or better) |
 | RAM | 8GB+ (16GB ideal) |
 | Boot drive | 256GB SSD (NVMe or SATA) |
-| Media drives | 2×1TB SATA HDDs (ZFS mirror) |
+| Media drives | 2×2TB SATA HDDs (ZFS mirror — repurposed from PBS) | 2TB each gives room for 1080p + some 4K |
 
 ### Implementation Plan
 
@@ -108,19 +108,20 @@ A dedicated Proxmox Backup Server to handle daily/weekly backups of all CTs from
 ### Architecture
 
 ```
-┌─ PBS (HP ProDesk) ─────────────────────────────┐
+┌─ PBS (Z230) ────────────────────────────────────┐
 │                                                 │
-│  ┌── ZFS mirror: 2×2TB ──────────────────────┐ │
+│  ┌── ZFS mirror: 2×4TB (new drives) ──────────┐ │
 │  │  datastore: /backup/homelab               │ │
 │  │  dedup + compression: on                  │ │
 │  │                                            │ │
-│  │  Daily backups from:                      │ │
-│  │  ├── PVE1: CTs 100-107                    │ │
-│  │  └── PVE2: CT 108                         │ │
+│  │  Includes:                                 │ │
+│  │  ├── CT backups from PVE1 (CTs 100-107)   │ │
+│  │  ├── CT 108 (media stack configs + apps)  │ │
+│  │  └── Media library (movies, shows)        │ │
 │  └────────────────────────────────────────────┘ │
 │                                                 │
-│  IP: 10.2.7.50 (or next available)              │
-│  Web UI: https://10.2.7.50:8007                 │
+│  IP: 10.2.7.65                                  │
+│  Web UI: https://10.2.7.65:8007                 │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -129,7 +130,8 @@ A dedicated Proxmox Backup Server to handle daily/weekly backups of all CTs from
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Backup target | **Proxmox Backup Server** | Native PVE integration, incremental forever, dedup |
-| Backup storage | **ZFS mirror (2×2TB)** | Redundancy + PBS dedup stretches effective capacity |
+| Backup storage | **ZFS mirror (2×4TB new drives)** | Redundancy — enough for all CT backups + full media library |
+| Backup scope | **CT backups + media library** | No longer excluding media — PBS has the capacity |
 | Backup schedule | **Daily at 3am, keep 7 daily + 4 weekly** | Standard 3-2-1 approach |
 | Prune & GC | **Weekly** | Prevents datastore bloat |
 
@@ -393,15 +395,16 @@ Torrent download / Disc rip                      Jellyfin stream
               └─────────────────┘
                            │
                            ▼
-                    ┌─ PBS Backup ─────┐
-                    │  nightly: CT 108 │
-                    │  (configs + apps)│
-                    │  Media NOT backed│
-                    └─────────────────┘
-                  (2×2TB ZFS mirror)
+                    ┌─ PBS Backup ───────────┐
+                    │  Nightly (CT 108 +     │
+                    │  media library)         │
+                    │  ALL backed up to       │
+                    │  2×4TB ZFS mirror      │
+                    └────────────────────────┘
+                  (Full data protection)
 ```
 
-**Backup strategy:** CT 108 configs + Docker volumes backed up daily to PBS. Media on 2×1TB RAID is NOT backed up to PBS (too large) — it's maintained by the *arrs (re-downloadable) and the ZFS mirror protects against disk failure.
+**Backup strategy:** Full data protection — CT 108 configs, Docker volumes, apps, AND the media library are all backed up nightly to PBS via the 2×4TB ZFS mirror. The ZFS mirror on PVE2 (2×2TB) protects against single disk failure on the live storage. PBS gives you a point-in-time recovery for everything including movies and shows.
 
 ---
 
@@ -410,17 +413,16 @@ Torrent download / Disc rip                      Jellyfin stream
 | Item | Qty | Rough Cost | Notes |
 |------|-----|------------|-------|
 | **Zimaboard 2** (2.5Gb router) | 1 | ~$200 | Replaces OPNsense Optiplex. 2.5Gb NICs. |
-| HP ProDesk 400/600 G3-G5 (i5, 8GB+) | 2 | ~$100-150 each | PVE2 + PBS. Check eBay/local surplus. |
+| HP ProDesk 400/600 G3-G5 (i5, 8GB+) | 1 | ~$100-150 | PVE2 only. PBS already on Z230. Check eBay/local surplus. |
 | USB Blu-ray drive (LG WH16NS60) | 1 | ~$60-80 | For ripper. Reads DVD + Blu-ray + UHD. |
-| 1TB SATA HDD (for PVE2 media) | 2 | ~$25-40 each | NAS-rated preferred (WD Red, Seagate IronWolf) |
-| 2TB SATA HDD (for PBS) | 2 | ~$40-60 each | For backups |
-| 256GB SSD (boot drives) | 2 | ~$20-30 each | PVE2 + PBS boot. NVMe if slot available |
+| **4TB CMR NAS HDD** (for PBS) | **2** | **~$80-120 each** | **New — replace the 2×2TB in PBS. WD Red Plus or Seagate IronWolf.** |
+| 256GB SSD (boot drives) | 1 | ~$20-30 | PVE2 boot. NVMe if slot available |
 | 2U vented rack shelf | 1 | ~$20-30 | Amazon basics or similar |
 | 24-port patch panel | 1 | ~$20-30 | Cat6 keystone type |
 | Managed switch (16-24 port) | 1 | ~$50-200 | Non-PoE ~$50 (TL-SG1024D). PoE ~$200 (UBNT USW-Lite-16-PoE) |
 | Cat6 patch cables (0.5ft-1ft) | ~24-pack | ~$15-20 | Amazon basics |
 | WiFi AP (U6 Lite / EAP610) | 1 | ~$60-100 | PoE-capable for clean install |
-| **Estimated total** | | **~$800-1,100** | Zimaboard is the biggest variable |
+| **Estimated total** | | **~$700-1,050** | Biggest cost: 2×4TB NAS drives (~$200) |
 
 ---
 
@@ -439,22 +441,26 @@ Torrent download / Disc rip                      Jellyfin stream
 3. Cable manage
 4. Verify all existing services still work
 
-### Phase 3: PBS Setup (1-2 hours)
-1. Install PBS on first HP ProDesk
-2. Configure ZFS + datastore
-3. Link PVE1 to PBS
-4. Set up backup jobs
-5. **Restore drill:** restore a small CT from PBS to verify
+### Phase 2: PBS Upgrade (1-2 hours)
+1. **Purchase 2×4TB NAS drives** (WD Red Plus or Seagate IronWolf)
+2. Install drives in Z230 (PBS machine)
+3. Create new ZFS pool: `zpool create backup mirror /dev/sda /dev/sdb`
+4. Recreate PBS datastore: `proxmox-backup-manager datastore create main /backup/datastore`
+5. Re-link PVE1 to PBS (re-auth with new fingerprint)
+6. Restore backups from old 2×2TB pool (optional, if data existed)
+7. Set up backup jobs for all CTs + media mount
+8. **Restore drill:** restore a small CT from PBS to verify
 
-### Phase 4: PVE2 + Media Stack (2-3 hours)
-1. Install PVE on second HP ProDesk
-2. Create ZFS media pool
-3. Create CT 108 with bind mount
-4. Deploy Docker + compose
-5. Configure Gluetun VPN
-6. Deploy *arrs + Jellyfin
-7. Link PVE2 to PBS
-8. Back up CT 108
+### Phase 3: PVE2 + Media Stack (2-3 hours)
+1. Install PVE on the HP ProDesk
+2. Move the **2×2TB drives from PBS** into PVE2
+3. Create ZFS media pool: `zpool create media mirror /dev/sda /dev/sdb`
+4. Create CT 108 with bind mount to /mnt/media
+5. Deploy Docker + compose
+6. Configure Gluetun VPN
+7. Deploy *arrs + Jellyfin
+8. Link PVE2 to PBS
+9. Back up CT 108 to PBS
 
 ### Phase 5: Ripper Setup (1-2 hours)
 1. Install Debian/Ubuntu on former OPNsense Optiplex
