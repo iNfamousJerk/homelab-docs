@@ -78,11 +78,25 @@ MONITOR cyberpower@localhost "CyberPower CP1500 AVR"
 Located at `/usr/local/bin/pve-ups-shutdown`. When triggered by upsmon (battery <10%):
 
 1. Stops all running LXC containers gracefully (`pct shutdown --timeout 60`)
-2. Waits 5 seconds
-3. Signals UPS to kill power via `upsdrvctl shutdown`
-4. Shuts down PVE host with 1-minute warning
+2. **Waits for OPNsense (10.2.7.1) to become unreachable** — OPNsense has NUT client configured to shut itself down at low battery
+3. Waits 5 seconds
+4. Signals UPS to kill power via `upsdrvctl shutdown`
+5. Shuts down PVE host with 1-minute warning
 
 Logs everything to `/var/log/pve-ups-shutdown.log`.
+
+> **Note:** The order matters. OPNsense (NUT client) sees low battery and initiates its own graceful shutdown FIRST. PVE shuts down its CTs, then waits for OPNsense to go offline, then kills the UPS. This prevents OPNsense from getting abruptly powered off.
+
+### OPNsense NUT Configuration
+
+OPNsense is configured as a NUT netclient (via `os-nut` plugin v1.9_1):
+
+- **Mode:** netclient (slave)
+- **Remote server:** 10.2.7.64 (PVE host, port 3493)
+- **UPS name:** cyberpower
+- **Username:** monitor
+- **Shutdown:** lowbatt — OPNsense initiates graceful shutdown when battery is critically low
+- **Config API:** `Services → Network UPS Tools` in OPNsense Web UI
 
 ### NUT Web UI
 
@@ -155,12 +169,20 @@ After power is restored, containers start in this sequence (staggered delays pre
    ├── Battery drains...
    │   └── Discord: UPSBatteryLow at <30%
    ├── Battery critical (<10%)
-   │   └── Shutdown script fires:
-   │       ├── Stop all containers gracefully
-   │       ├── Signal UPS to kill power
-   │       └── Power off PVE host
+   │   └── OPNsense (NUT client) initiates graceful shutdown:
+   │       ├── Flush pf states
+   │       ├── Stop services
+   │       ├── Sync filesystem
+   │       └── Power off
+   │
+   ├── PVE shutdown script fires:
+   │   ├── Stop all containers gracefully
+   │   ├── Wait for OPNsense (10.2.7.1) to go offline
+   │   ├── Signal UPS to kill power
+   │   └── Power off PVE host
    │
 ⚡ Power Returns
+   ├── OPNsense boots (BIOS: power-on after AC restore)
    ├── PVE boots (BIOS: Restore on AC Loss)
    └── Containers auto-start in order (1→8)
 ```
