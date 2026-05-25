@@ -39,8 +39,11 @@ Dashboard → Vulnerabilities → shows CVEs detected on any monitored system
 Dashboard → Integrity Monitoring → shows what files changed and when
 
 ## Agent Deployment (for future new CTs)
+
+> **Current Wazuh version:** 4.14.5 (latest 4.x stable line — 5.x requires clean install, see below)
+
 ```bash
-# Add Wazuh repo
+# Add Wazuh repo (4.x — current stable)
 curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-tty --yes --dearmor > /usr/share/keyrings/wazuh.gpg
 echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" > /etc/apt/sources.list.d/wazuh.list
 apt-get update
@@ -51,9 +54,26 @@ apt-get install -y wazuh-agent
 # Configure manager address
 sed -i 's/MANAGER_IP/10.2.7.110/g' /var/ossec/etc/ossec.conf
 
+# ⚠️ REQUIRED: Enroll with manager (without this, agent stays "disconnected")
+/var/ossec/bin/agent-auth -m 10.2.7.110 -A $(hostname)
+
 # Start
 systemctl enable --now wazuh-agent
+
+# Verify
+/var/ossec/bin/agent_control -l
 ```
+
+### Wazuh 5.x Upgrade — Future Project
+
+Wazuh 5.0 **cannot be upgraded in-place** from 4.x. It requires a clean OS install with config migration:
+1. Document all current custom rules, decoders, and configurations
+2. Export agent enrollment keys
+3. Perform clean OS install and deploy Wazuh 5.x
+4. Re-import configurations and re-enroll all 8 agents
+5. **Estimated effort:** 1 full day — schedule when you can tolerate downtime
+
+See [Wazuh 5.0 migration guide](https://documentation.wazuh.com/5.0/upgrade-guide/migration-from-4-x.html) when ready.
 
 ## Maintenance
 ### Update Wazuh manager
