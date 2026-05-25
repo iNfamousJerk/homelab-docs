@@ -85,6 +85,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [12-tailscale.md](12-tailscale.md) | VPN access setup |
 | [14-ups-monitoring.md](14-ups-monitoring.md) | UPS monitoring — NUT, Prometheus, Grafana, Discord alerts |
 | [CREDENTIALS.md](CREDENTIALS.md) | Login reference (passwords redacted) |
+| [SECURITY-CHECKLIST.md](SECURITY-CHECKLIST.md) | Expansion security protocol — 4-phase checklist for adding new services |
 | [DR-IR-PLAYBOOK.md](DR-IR-PLAYBOOK.md) | Disaster recovery & incident response — 5 scenarios |
 | [SOC-UPGRADE-PLAN.md](SOC-UPGRADE-PLAN.md) | Enterprise SOC upgrade — 4-phase plan |
 
@@ -116,7 +117,9 @@ homelab-docs/
 ├── 13-wazuh.md                      — Wazuh SIEM security monitoring
 ├── 14-ups-monitoring.md             — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
 ├── 15-pbs-setup.md                  — Proxmox Backup Server hardware & integration
+├── scripts/                         — Pre-commit hook, secret scanner
 ├── CREDENTIALS.md                   — Login reference (passwords redacted)
+├── SECURITY-CHECKLIST.md            — Expansion security protocol (4-phase)
 ├── DR-IR-PLAYBOOK.md                — Disaster recovery & incident response
 ├── SOC-UPGRADE-PLAN.md              — Enterprise SOC upgrade roadmap
 ├── services-roadmap.md              — Planned services & hardware pipeline
