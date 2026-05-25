@@ -1,0 +1,182 @@
+# ============================================================
+# Pirate Media Stack — Testing Mode (No VPN)
+# ============================================================
+# When you add ProtonVPN later, insert Gluetun service
+# and set qBittorrent network_mode: "service:gluetun"
+# See: /opt/media-stack/gluetun-addon.yml (create when ready)
+#
+# Nginx reverse proxy on port 80 provides subdomain access:
+#   *.pirate.lan → 10.2.7.109
+# Add a wildcard A record in Pi-hole: *.pirate.lan → 10.2.7.109
+# ============================================================
+
+x-puid: &puid "1000"
+x-pgid: &pgid "1000"
+x-tz: &tz "America/New_York"
+x-dns: &dns
+  - "1.1.1.1"
+  - "1.0.0.1"
+x-restart: &restart "unless-stopped"
+x-apparmor: &apparmor
+  security_opt:
+    - apparmor=unconfined
+
+services:
+  # ─── Reverse Proxy ────────────────────────────────────────
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - qbittorrent
+      - radarr
+      - sonarr
+      - prowlarr
+      - bazarr
+      - lidarr
+      - jellyfin
+      - jellyseerr
+    restart: *restart
+
+  # ─── Torrent Client ────────────────────────────────────────
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+      - UMASK=002
+    volumes:
+      - ./config/qbittorrent:/config
+      - /data:/data
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Indexer Aggregator ────────────────────────────────────
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/prowlarr:/config
+    ports:
+      - "9696:9696"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Cloudflare Bypass ─────────────────────────────────────
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=warn
+    ports:
+      - "8191:8191"
+    restart: *restart
+
+  # ─── Movie Automation ──────────────────────────────────────
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/radarr:/config
+      - /data:/data
+    ports:
+      - "7878:7878"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── TV Show Automation ────────────────────────────────────
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/sonarr:/config
+      - /data:/data
+    ports:
+      - "8989:8989"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Music Automation ──────────────────────────────────────
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/lidarr:/config
+      - /data:/data
+    ports:
+      - "8686:8686"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Subtitles ─────────────────────────────────────────────
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/bazarr:/config
+      - /data:/data
+    ports:
+      - "6767:6767"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Media Server ──────────────────────────────────────────
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/jellyfin:/config
+      - /data/media:/data/media
+    ports:
+      - "8096:8096"
+    <<: *apparmor
+    restart: *restart
+
+  # ─── Media Requests ────────────────────────────────────────
+  jellyseerr:
+    image: lscr.io/linuxserver/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - PUID=*puid
+      - PGID=*pgid
+      - TZ=*tz
+    volumes:
+      - ./config/jellyseerr:/config
+    ports:
+      - "5055:5055"
+    <<: *apparmor
+    restart: *restart
