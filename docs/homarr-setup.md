@@ -4,85 +4,83 @@
 
 Homarr is your **single-pane-of-glass dashboard** for the entire homelab. One place to find every service.
 
-## Initial Setup
+## Current Service Layout
 
-1. Open http://10.2.7.105:7575 in a browser
-2. Create your admin account (this will be the first user)
-3. You're in — start adding services
-
-## Recommended Board Layout
-
-### Row 1: Monitoring (top row, 3 columns)
+### Row 1: Uncategorized (Top Row)
 
 | Service | Type | URL | Icon |
 |---------|------|-----|------|
-| **Grafana** | URL | http://10.2.7.108:3000 | grafana |
+| **Proxmox PVE** | URL | https://10.2.7.64:8006 | proxmox |
+| **PBS** | URL | https://10.2.7.65:8007 | proxmox |
+
+### Row 2: Monitoring
+
+| Service | Type | URL | Icon |
+|---------|------|-----|------|
+| **Uptime Kuma** | URL | http://10.2.7.108:3001 | uptime-kuma |
 | **Wazuh** | URL | https://10.2.7.110 | wazuh |
+| **Grafana** | URL | http://10.2.7.108:3000 | grafana |
+| **Prometheus** | URL | http://10.2.7.108:9090 | prometheus |
+| **Hermes Agent** | URL | http://10.2.7.107:8642/health | terminal |
+| **Alertmanager** | URL | http://10.2.7.108:9093 | prometheus |
+
+### Row 3: Networking
+
+| Service | Type | URL | Icon |
+|---------|------|-----|------|
+| **OPNsense** | URL | https://10.2.7.1 | opnsense |
 | **Pi-hole** | URL | http://10.2.7.2/admin | pi-hole |
+| **Pi.Alert** | URL | http://10.2.7.77 | pialert |
 
-### Row 2: Media & Storage
+### Row 4: Storage & Tools
 
 | Service | Type | URL | Icon |
 |---------|------|-----|------|
+| **Nextcloud** | URL | https://10.2.7.99 | nextcloud |
 | **Immich** | URL | http://10.2.7.44:2283 | immich |
-| **Nextcloud** | URL | http://10.2.7.99 | nextcloud |
-| **Jellyfin** | URL *(when set up)* | http://10.2.7.X:8096 | jellyfin |
+| **GitHub** | URL | https://github.com/iNfamousJerk?tab=repositories | github |
+| **Gitea** | URL | http://10.2.7.108:3002 | gitea |
 
-### Row 3: Infrastructure
-
-| Service | Type | URL | Icon |
-|---------|------|-----|------|
-| **Proxmox** | URL | https://10.2.7.64:8006 | proxmox |
-| **PiAlert** | URL | http://10.2.7.77 | pialert |
-| **Homarr** | URL *(itself)* | http://10.2.7.105:7575 | homarr |
-
-### Row 4: Security & Tools
+### (Future) Media Section — empty until CT 108 is deployed
 
 | Service | Type | URL | Icon |
 |---------|------|-----|------|
-| **Wazuh Manager** | URL | https://10.2.7.110 | wazuh |
-| **Hermes (CT 100)** | URL | http://10.2.7.107:XXX | terminal |
-| **PVE Host** | URL | https://10.2.7.64:8006 | server |
+| **Jellyfin** | *(when set up)* | http://10.2.7.X:8096 | jellyfin |
 
-## Widgets to Add (per row)
-
-### Top Row: Monitoring Widgets
-1. **Docker Container Monitor** — shows running containers on CT 106
-2. **Resource Monitor** — CPU/RAM/Disk of CT 106 (or PVE host)
-
-### Middle Section
-3. **Date & Time** widget
-4. **Weather** widget (Las Vegas, NV)
-
-### Bottom
-5. **Bookmarks** — common tools
-   - GitHub: https://github.com/iNfamousJerk
-   - Proxmox: https://10.2.7.64:8006
-   - OPNsense: http://10.2.7.1
-
-## Adding a Service
+## Adding a New Service
 
 1. Click the **+** button in the top bar or the empty tile
 2. Choose **"App"**
 3. Fill in:
    - **Name:** Display name (e.g., "Grafana")
-   - **URL:** The service URL (e.g., http://10.2.7.108:3000)
+   - **URL:** The service URL
    - **Icon:** Search for the service name or upload a PNG
    - **Behaviour:** "Open in new tab" (recommended)
 4. Click **Save**
+5. Drag tiles to arrange your layout
 
-## Adding the Docker Widget
+## Maintenance
 
-1. Click **+** → **"Integration"**
-2. Choose **"Docker"**
-3. Set Docker socket path: `/var/run/docker.sock`
-4. Save — now you see all containers on CT 106 running live
+### Update Homarr
+```bash
+pct enter 103
+source /opt/homarr.env
+cd /opt/homarr
+# Homarr runs as a systemd service, update instructions pending
+```
+
+### Update container OS
+```bash
+pct enter 103
+apt update && apt upgrade -y
+```
 
 ## Tips
-
 - Drag tiles to reorder
 - Resize by dragging bottom-right corner
 - Change color scheme in **Settings → Appearance**
 - Set dark mode for the full homelab vibe
 - Enable **Search** for quick service switching
 - If a service icon doesn't show, Homarr will fetch it from the URL favicon
+- Homarr stores data in a SQLite DB at `/opt/homarr_db/db.sqlite`
+- API available at `/api/openapi` with API key auth
