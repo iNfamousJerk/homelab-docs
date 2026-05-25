@@ -15,10 +15,10 @@ This homelab runs on a **Proxmox** hypervisor hosting multiple LXC containers se
 | **CPU** | Intel i5-7500 (4 cores) |
 | **RAM** | 31.2 GB |
 | **Disk** | 94 GB (local-lvm) |
-| **Hypervisor** | Proxmox VE 9.1.1 |
+| **Hypervisor** | Proxmox VE 9.2.2 |
 | **Hostname** | pve |
 | **Management IP** | 10.2.7.64:8006 |
-| **Uptime** | ~12 days |
+| **Uptime** | varies (last reboot: 2026-05-24) |
 
 ## 🔐 Credentials
 
