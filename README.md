@@ -46,6 +46,12 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 
 Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 
+### Operational Playbooks
+| Doc | What It Covers |
+|-----|----------------|
+| [00-pve-pbs-lifecycle-playbook.md](00-pve-pbs-lifecycle-playbook.md) | **1,614-line definitive runbook** — create/restore/maintain/troubleshoot every VM, LXC, and PBS operation |
+| [00-pve-pbs-rebuild-blueprint.md](00-pve-pbs-rebuild-blueprint.md) | **Script-free rebuild** — migrate away from community helper scripts to raw upstream git, official APT, hand-written systemd |
+
 ### Infrastructure
 | Doc | What It Covers |
 |-----|----------------|
@@ -79,6 +85,8 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [12-tailscale.md](12-tailscale.md) | VPN access setup |
 | [14-ups-monitoring.md](14-ups-monitoring.md) | UPS monitoring — NUT, Prometheus, Grafana, Discord alerts |
 | [CREDENTIALS.md](CREDENTIALS.md) | Login reference (passwords redacted) |
+| [DR-IR-PLAYBOOK.md](DR-IR-PLAYBOOK.md) | Disaster recovery & incident response — 5 scenarios |
+| [SOC-UPGRADE-PLAN.md](SOC-UPGRADE-PLAN.md) | Enterprise SOC upgrade — 4-phase plan |
 
 ---
 
@@ -90,22 +98,30 @@ This repo covers the homelab infrastructure. The media automation stack has its 
 
 ```
 homelab-docs/
-├── README.md                   ← This file
-├── 01-proxmox.md               — Server setup & API access
-├── 02-containers.md            — All LXC containers + Docker setup
-├── 03-network.md               — Subnet, OPNsense, IPs
-├── 04-pihole.md                — DNS + DHCP
-├── 05-immich.md                — Photo backup
-├── 06-pialert.md               — Network monitoring
-├── 07-homarr.md                — Dashboard
-├── 08-nextcloud.md             — Cloud storage
-├── 09-hermes-agent.md          — AI assistant
-├── 10-grafana.md               — Full monitoring stack (Prometheus + Grafana + alerts)
-├── 11-docker.md                — Docker setup, compose, troubleshooting
-├── 12-tailscale.md             — VPN access
-├── 13-wazuh.md                 — Wazuh SIEM security monitoring
-├── 14-ups-monitoring.md        — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
-└── CREDENTIALS.md              — Login reference (passwords redacted)
+├── README.md                        ← This file
+├── 00-pve-pbs-lifecycle-playbook.md — 4-pillar PVE/PBS operational runbook (1,614 lines)
+├── 00-pve-pbs-rebuild-blueprint.md  — Script-free rebuild from scratch (1,438 lines)
+├── 01-proxmox.md                    — Server setup & API access
+├── 02-containers.md                 — All LXC containers + Docker setup
+├── 03-network.md                    — Subnet, OPNsense, IPs
+├── 04-pihole.md                     — DNS + DHCP
+├── 05-immich.md                     — Photo backup
+├── 06-pialert.md                    — Network monitoring
+├── 07-homarr.md                     — Dashboard
+├── 08-nextcloud.md                  — Cloud storage
+├── 09-hermes-agent.md               — AI assistant
+├── 10-grafana.md                    — Full monitoring stack (Prometheus + Grafana + alerts)
+├── 11-docker.md                     — Docker setup, compose, troubleshooting
+├── 12-tailscale.md                  — VPN access
+├── 13-wazuh.md                      — Wazuh SIEM security monitoring
+├── 14-ups-monitoring.md             — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
+├── 15-pbs-setup.md                  — Proxmox Backup Server hardware & integration
+├── CREDENTIALS.md                   — Login reference (passwords redacted)
+├── DR-IR-PLAYBOOK.md                — Disaster recovery & incident response
+├── SOC-UPGRADE-PLAN.md              — Enterprise SOC upgrade roadmap
+├── services-roadmap.md              — Planned services & hardware pipeline
+├── docs/                            — Setup guides (Homarr, monitoring-stack)
+└── PLANS/                           — Hardware upgrade plans (pirate-pbs, homelab-v2)
 ```
 
 ## 🔮 Future Plans
