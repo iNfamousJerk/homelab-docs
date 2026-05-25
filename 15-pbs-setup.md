@@ -3,7 +3,7 @@
 ## Hardware
 - **Host:** HP Z230
 - **IP:** 10.2.7.65 (PBS web UI on port 8007)
-- **Root password:** 2backuptheworld
+- **Root password:** `********` (stored in password manager)
 - **OS:** Debian 13 Trixie
 
 ### Storage

@@ -10,7 +10,7 @@ This PVE host uses **LVM thin provisioning** (`local-lvm`) on a single 1TB PNY C
 - SSH: root@10.2.7.64
 - API: https://10.2.7.64:8006/api2/json
 - Hostname: pve
-- OS: PVE 9.2.2 (Debian 12 Bookworm base)
+- **OS:** PVE 9.2.2 (Debian 13 Trixie base)
 - Storage: local-lvm (LVM thin pool, 670.7GB), local (ISOs/templates, 28GB), pbs (backup target)
 
 ## User Manual

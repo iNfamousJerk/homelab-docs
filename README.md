@@ -65,7 +65,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [10-grafana.md](10-grafana.md) | **Full monitoring stack** — Prometheus, Grafana, Alertmanager, cAdvisor, Pi-hole exporter, Discord alerts |
 | [11-docker.md](11-docker.md) | Docker install, compose commands, AppArmor fix |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM: agent-based threat detection, file integrity, vuln scanning |
-| [monitoring-stack.md](monitoring-stack.md) | **Updated Dec 2026** — 20 alert rules, blackbox exporter probes (17 targets), Discord alerting pipeline |
+| [10-grafana.md](10-grafana.md) | **Updated May 2026** — Full Prometheus/Grafana/Alertmanager stack, 20 alert rules, Discord pipeline |
 
 ### Services
 | Doc | What It Covers |
