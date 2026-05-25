@@ -16,6 +16,7 @@ Real-world use: Think of each container as a dedicated computer for one job. Imm
 | 103 | homarr | 10.2.7.105 | 2GB | 2 | 8GB | Dashboard | 6 (up 20s) |
 | 105 | wazuh | 10.2.7.110 | 4GB | 4 | 24GB | Wazuh SIEM manager | 7 (up 30s) |
 | 104 | nextcloud | 10.2.7.99 | 512MB | 1 | 30GB | Cloud storage | 8 (up 20s) |
+| **108** | **pirate** | **10.2.7.109** | **2GB** | **2** | **10GB** | **Media stack (Docker) — temp on PVE1, ready for PVE2** | **9 (up 20s)** |
 
 > ⚠️ **Boot order verified from live PVE config (2026-05-25):** Pi-hole boots first (DNS infra), then monitoring stack, then services. Containers with lower resources (PiAlert 512MB, Nextcloud 512MB) were downsized from their initial allocations — they run fine at these levels for current usage.
 
