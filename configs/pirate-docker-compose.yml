@@ -3,10 +3,12 @@
 # ============================================================
 # When you add ProtonVPN later, insert Gluetun service
 # and set qBittorrent network_mode: "service:gluetun"
-# See: /opt/media-stack/gluetun-addon.yml (create when ready)
 #
-# Nginx reverse proxy on port 80 provides subdomain access:
+# Nginx Proxy Manager on port 80/443 provides subdomain access:
 #   *.pirate.lan → 10.2.7.109
+# NPM Admin UI: http://10.2.7.109:81  (login: admin@example.com / changeme)
+# Vaultwarden accessed via NPM -> vaultwarden.pirate.lan
+#
 # Add a wildcard A record in Pi-hole: *.pirate.lan → 10.2.7.109
 # ============================================================
 
@@ -22,24 +24,30 @@ x-apparmor: &apparmor
     - apparmor=unconfined
 
 services:
-  # ─── Reverse Proxy ────────────────────────────────────────
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+  # ─── Reverse Proxy (Web UI) ────────────────────────────────
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
     ports:
       - "80:80"
+      - "81:81"
+      - "443:443"
     volumes:
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
-    depends_on:
-      - qbittorrent
-      - radarr
-      - sonarr
-      - prowlarr
-      - bazarr
-      - lidarr
-      - jellyfin
-      - jellyseerr
+      - ./config/npm/data:/data
+      - ./config/npm/letsencrypt:/etc/letsencrypt
+    restart: *restart
+
+  # ─── Password Manager ──────────────────────────────────────
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - SIGNUPS_ALLOWED=true
+      - DOMAIN=https://vaultwarden.pirate.lan
+      - WEBSOCKET_ENABLED=true
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN:-CHANGEME_ADMIN_TOKEN}
+    volumes:
+      - ./config/vaultwarden:/data
     restart: *restart
 
   # ─── Torrent Client ────────────────────────────────────────
@@ -168,7 +176,7 @@ services:
 
   # ─── Media Requests ────────────────────────────────────────
   jellyseerr:
-    image: lscr.io/linuxserver/jellyseerr:latest
+    image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
     environment:
       - PUID=*puid
