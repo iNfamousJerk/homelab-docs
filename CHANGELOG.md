@@ -6,6 +6,17 @@
 
 ---
 
+## [2026-05-26] — Pirate Media Stack Documentation
+
+| File | Change | Reason | Author |
+|------|--------|--------|--------|
+| `16-pirate-media-stack.md` | Created | Full doc for CT 108 — NPM, Vaultwarden, *arrs, Jellyfin | Hermes |
+| `README.md` | Added CT 108 to inventory, services, future plans | Missing from overview | Hermes |
+| `02-containers.md` | Added CT 108 to storage table + update loop | Missing disk usage data | Hermes |
+| `NETWORK-TOPOLOGY.md` | Added CT 108 to logical diagram + IPAM table | Missing from network map | Hermes |
+| `CREDENTIALS.md` | Added CT 108 + NPM/Vaultwarden/Jellyfin entries | Missing service creds | Hermes |
+| `services-roadmap.md` | Marked Vaultwarden, NPM, media stack ✅ | Roadmap now reflects deployed state | Hermes |
+
 ## [2026-05-25] — Docs Audit & Remediation (Phase 1)
 
 | File | Change | Reason | Author |

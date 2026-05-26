@@ -32,7 +32,7 @@ Real-world use: Think of each container as a dedicated computer for one job. Imm
 ### Update all containers
 ```bash
 # From PVE host, loop through all:
-for ct in 100 101 102 103 104 105 106 107; do
+for ct in 100 101 102 103 104 105 106 107 108; do
   echo "=== Updating CT $ct ==="
   pct exec $ct -- apt update -qq 2>/dev/null
   pct exec $ct -- apt upgrade -y -qq 2>/dev/null
@@ -64,7 +64,7 @@ pct resize <CT_ID> rootfs <new_size>G
 
 ## Storage Layout
 
-All 8 containers use `local-lvm` (LVM thin pool) on a single 1TB PNY CS900 SSD:
+All 9 containers use `local-lvm` (LVM thin pool) on a single 1TB PNY CS900 SSD:
 
 | Disk Image | Container | Size | Used |
 |------------|-----------|------|------|
@@ -76,6 +76,7 @@ All 8 containers use `local-lvm` (LVM thin pool) on a single 1TB PNY CS900 SSD:
 | vm-105-disk-0 | wazuh (CT 105) | 24GB | 16.1GB |
 | vm-106-disk-0 | grafana (CT 106) | 30GB | 7.0GB |
 | vm-107-disk-0 | pihole (CT 107) | 4GB | 1.2GB |
+| vm-108-disk-0 | pirate (CT 108) | 10GB | 7.3GB |
 
 **PBS backup storage:** 48.2GB used of 1.75TB available on `z230` (ZFS mirror, 2×2TB).
 

@@ -37,8 +37,9 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 | 103 | Homarr | 10.2.7.105 | Dashboard |
 | 104 | Nextcloud | 10.2.7.99 | Cloud storage |
 | 105 | Wazuh | 10.2.7.110 | SIEM manager |
-| 106 | Grafana | 10.2.7.108 | Monitoring stack (8 Docker containers) |
+| 106 | Grafana | 10.2.7.108 | Monitoring stack (10 Docker containers) |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
+| 108 | Pirate | 10.2.7.109 | Media stack (11 Docker containers) |
 
 ---
 
@@ -78,6 +79,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM security monitoring (all 8 CTs) |
+| [16-pirate-media-stack.md](16-pirate-media-stack.md) | CT 108 — Media automation, Jellyfin, Vaultwarden |
 
 ### Networking & Access
 | Doc | What It Covers |
@@ -93,9 +95,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 
 ## 📁 Repo Structure
 
-This repo covers the homelab infrastructure. The media automation stack has its own repo:
-
-- **📺 [media-stack](https://github.com/iNfamousJerk/media-stack)** — Radarr, Sonarr, Prowlarr, qBittorrent, Jellyfin, Lidarr, Bazarr
+This repo covers the homelab infrastructure. The media automation stack runs on CT 108 (see [16-pirate-media-stack.md](16-pirate-media-stack.md)).
 
 ```
 homelab-docs/
@@ -117,6 +117,7 @@ homelab-docs/
 ├── 13-wazuh.md                      — Wazuh SIEM security monitoring
 ├── 14-ups-monitoring.md             — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
 ├── 15-pbs-setup.md                  — Proxmox Backup Server hardware & integration
+├── 16-pirate-media-stack.md         — CT 108 media stack, Vaultwarden, NPM
 ├── scripts/                         — Pre-commit hook, secret scanner
 ├── CREDENTIALS.md                   — Login reference (passwords redacted)
 ├── SECURITY-CHECKLIST.md            — Expansion security protocol (4-phase)
@@ -129,8 +130,9 @@ homelab-docs/
 
 ## 🔮 Future Plans
 
-- [ ] **🏴‍☠️ Project Pirate PBS** — Dell Optiplex 7050 MT second node (see [PLANS/pirate-pbs.md](PLANS/pirate-pbs.md))
+- [x] **🏴‍☠️ Pirate Media Stack** — CT 108 running NPM, Vaultwarden, *arrs, Jellyfin
 - [ ] USB Blu-ray + auto-ripper for physical media
 - [ ] 2.5Gb network upgrade
 - [ ] VLAN segmentation
 - [ ] More Grafana dashboards
+- [ ] **PVE2** — Dedicated second node for media stack migration

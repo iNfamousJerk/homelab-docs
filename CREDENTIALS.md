@@ -22,6 +22,7 @@
 | 105 | Wazuh Manager | root | [REDACTED - lowercase themed] | Key-based (root@10.2.7.110) |
 | 106 | Grafana | root | [REDACTED - lowercase themed] | Key-based |
 | 107 | Pi-hole | root | [REDACTED - lowercase themed] | Key-based |
+| 108 | Pirate Media Stack | root | [REDACTED - lowercase themed] | Key-based |
 
 > **Note:** All passwords are themed phrases related to each container's or service's function. Stored securely in Hermes memory.
 
@@ -37,6 +38,9 @@
 | Wazuh Dashboard | https://10.2.7.110:443 | admin / [REDACTED] |
 | Wazuh Manager API | https://10.2.7.110:55000 | API key auth |
 | PVE Host | https://10.2.7.64:8006 | root@pam / [REDACTED] |
+| NPM Admin (CT 108) | http://10.2.7.109:81 | admin@example.com / [REDACTED] |
+| Vaultwarden Admin | http://10.2.7.109 (via NPM) | `/admin` — [REDACTED token] |
+| Jellyfin | http://10.2.7.109:8096 | First user = admin |
 
 ## Notes
 

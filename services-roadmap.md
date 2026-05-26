@@ -24,7 +24,8 @@
 | ✅ Nextcloud | CT 104 | Cloud storage |
 | ✅ NUT UPS Monitoring | PVE + CT 106 + OPNsense | UPS status + graceful shutdown |
 | ✅ Media Stack (Pirate) | CT 108 | qBittorrent, *arrs, Jellyfin, Jellyseerr |
-| ✅ Nginx Reverse Proxy | CT 108 | Subdomain routing for Pirate stack |
+| ✅ Vaultwarden | CT 108 | Self-hosted Bitwarden-compatible password manager |
+| ✅ Nginx Proxy Manager | CT 108 | Subdomain routing, SSL termination for Pirate stack |
 | ✅ Hermes Agent | CT 100 | AI assistant |
 | ✅ Discord Alerting | — | Wazuh, Grafana, Uptime Kuma → Discord |
 
@@ -33,25 +34,25 @@
 ## ⬜ Recommended Next Services
 
 ### Priority 1 — Vaultwarden
-Self-hosted Bitwarden-compatible password manager. **Biggest security gap.**
+Self-hosted Bitwarden-compatible password manager.
 
+- ✅ **Deployed** on CT 108 as part of the pirate media stack
 - Single Docker container, ~50MB RAM
 - Bitwarden apps on phone/browser connect to your server
 - Family sharing — Brittany, daughter each get their own vault
 - Auto-fill on iPhone, MacBook, PC
-- **Where:** Docker on CT 106 (monitoring stack has room) or dedicated lightweight CT
-- **Why now:** You've got 10+ services with different logins. One master password unlocks all of them.
-- **Deps:** None
+- Access via NPM: `https://vaultwarden.pirate.lan`
+- Next step: set up Bitwarden apps, import passwords, disable open signups
 
 ### Priority 2 — Nginx Proxy Manager
 Web UI for the reverse proxy + automatic Let's Encrypt SSL certs.
 
+- ✅ **Deployed** on CT 108 alongside the pirate stack
 - Click-to-add proxy hosts instead of hand-editing nginx configs
 - Auto-renewing SSL certificates via DNS-01 challenge
 - Works with Pi-hole DNS wildcards
-- **Where:** Docker on CT 106 alongside Gitea/Uptime Kuma
-- **Why now:** Already running a manual nginx on CT 108. NPM gives you the same for *all* services across every CT with a management UI.
-- **Deps:** Make sure port 80/443 are free on the target CT (don't conflict with CT 108's nginx)
+- Currently serves `*.pirate.lan` subdomains
+- Next step: add Let's Encrypt SSL and expand to other CTs
 
 ### Priority 3 — Paperless-ngx
 Document management: scan → OCR → auto-tag → searchable.
@@ -113,7 +114,7 @@ Self-hosted budgeting app.
 
 | Phase | What | Timeline |
 |-------|------|----------|
-| 🔜 Now | Vaultwarden + NPM | This week |
-| ⏳ Soon | Paperless-ngx + Authentik | Next |
+| ✅ Media Stack | Vaultwarden + NPM + *arrs + Jellyfin | Deployed on CT 108 |
+| 🔜 Now | Paperless-ngx + Authentik | Next |
 | 🗓️ After VPN | Gluetun for Pirate | When ProtonVPN arrives |
 | 🎯 Future | Minecraft + Calibre + Actual | After PVE2 is online |

@@ -18,10 +18,10 @@
 │                              │                                  │
 │                    vmbr0 (10.2.7.0/24)                          │
 │                              │                                  │
-│   ┌────┬────┬────┬────┬────┬┴┬────┬────┬────┬────┬────┐      │
-│  100  101  102  103  104  105 106  107  PVE  PBS  .1          │
-│ Her  Immich PiA  Homr NxtC Waz  Graf PiH  .64  .65  OPN       │
-│ .107 .44  .77  .105 .99 .110 .108 .2                          │
+│   ┌────┬────┬────┬────┬────┬┴┬────┬────┬────┬────┬────┬────┐      │
+│  100  101  102  103  104  105 106  107  108  PVE  PBS  .1          │
+│ Her  Immich PiA  Homr NxtC Waz  Graf PiH  Pir  .64  .65  OPN       │
+│ .107 .44  .77  .105 .99 .110 .108 .2   .109                        │
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -51,6 +51,7 @@ Summary:
 | Grafana Stack | 106 | 10.2.7.108 | 1 (flat) | 30 | | Grafana, Prometheus, Docker, Gitea | 10 Docker containers |
 | Wazuh | 105 | 10.2.7.110 | 1 (flat) | 30 | | SIEM Manager | All-in-one node |
 | Hermes Agent | 100 | 10.2.7.107 | 1 (flat) | 40 | | AI agent | API at :8642 |
+| Pirate Stack | 108 | 10.2.7.109 | 1 (flat) | 20 (target) | | Media stack, NPM, Vaultwarden | 11 Docker containers |
 
 ## 4. Physical Topology
 
