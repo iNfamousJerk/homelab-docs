@@ -40,6 +40,7 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 | 106 | Grafana | 10.2.7.108 | Monitoring stack (10 Docker containers) |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
 | 108 | Pirate | 10.2.7.109 | Media stack (10 Docker containers) |
+| 109 | Kuma | 10.2.7.111 | Uptime Kuma standalone |
 
 ---
 
@@ -80,6 +81,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM security monitoring (all 8 CTs) |
 || [16-pirate-media-stack.md](16-pirate-media-stack.md) | CT 108 — Media automation, Jellyfin, NPM (Vaultwarden migrated to CT 104) |
+|| [17-kuma.md](17-kuma.md) | CT 109 — Uptime Kuma standalone monitoring |
 
 ### Networking & Access
 | Doc | What It Covers |

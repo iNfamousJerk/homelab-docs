@@ -17,7 +17,7 @@ Homarr is your **single-pane-of-glass dashboard** for the entire homelab. One pl
 
 | Service | Type | URL | Icon |
 |---------|------|-----|------|
-| **Uptime Kuma** | URL | http://10.2.7.108:3001 | uptime-kuma |
+| **Uptime Kuma** | URL | http://10.2.7.111:3001 | uptime-kuma |
 | **Wazuh** | URL | https://10.2.7.110 | wazuh |
 | **Grafana** | URL | http://10.2.7.108:3000 | grafana |
 | **Prometheus** | URL | http://10.2.7.108:9090 | prometheus |
