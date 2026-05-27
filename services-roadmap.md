@@ -24,7 +24,14 @@
 | ✅ Nextcloud | CT 104 | Cloud storage |
 | ✅ NUT UPS Monitoring | PVE + CT 106 + OPNsense | UPS status + graceful shutdown |
 | ✅ Media Stack (Pirate) | CT 108 | qBittorrent, *arrs, Jellyfin, Jellyseerr |
-| ✅ Vaultwarden | CT 108 | Self-hosted Bitwarden-compatible password manager |
+| ✅ Vaultwarden | CT 104 | Self-hosted Bitwarden-compatible password manager (migrated from CT 108) |
+| ✅ OnlyOffice | CT 104 | Document server for Nextcloud integration |
+| ✅ LanguageTool | CT 104 | Self-hosted grammar check API |
+| ✅ Actual Budget | CT 104 | Personal finance tracking |
+| ✅ Nextcloud Deck | CT 104 | Kanban project management (built-in app) |
+| ✅ Nextcloud Mail | CT 104 | Webmail client (built-in app) |
+| ✅ Nextcloud Calendar | CT 104 | CalDAV calendar (built-in app) |
+| ✅ Nextcloud Talk | CT 104 | Team chat/SIP (built-in app) |
 | ✅ Nginx Proxy Manager | CT 108 | Subdomain routing, SSL termination for Pirate stack |
 | ✅ Hermes Agent | CT 100 | AI assistant |
 | ✅ Discord Alerting | — | Wazuh, Grafana, Uptime Kuma → Discord |

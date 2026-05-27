@@ -1,0 +1,56 @@
+# Nextcloud CT Office Stack — Vaultwarden, LanguageTool, Actual Budget, OnlyOffice
+# Proxy via NPM on CT 108 → 10.2.7.99
+
+services:
+  # ─── Password Manager ──────────────────────────────────────
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - SIGNUPS_ALLOWED=false
+      - DOMAIN=https://vaultwarden.pirate.lan
+      - WEBSOCKET_ENABLED=true
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
+    volumes:
+      - ./vaultwarden/data:/data
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+
+  # ─── Office Suite (Nextcloud Integration) ──────────────────
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: onlyoffice
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=officesecret2026
+    volumes:
+      - ./onlyoffice/logs:/var/log/onlyoffice
+      - ./onlyoffice/data:/var/www/onlyoffice/Data
+      - ./onlyoffice/lib:/var/lib/onlyoffice
+      - ./onlyoffice/db:/var/lib/postgresql
+    ports:
+      - "8083:80"
+    restart: unless-stopped
+
+  # ─── Grammar Check API ─────────────────────────────────────
+  languagetool:
+    image: erikvl87/languagetool:latest
+    container_name: languagetool
+    volumes:
+      - ./languagetool:/ngrams
+    ports:
+      - "8010:8010"
+    environment:
+      - langtool_languageModel=/ngrams
+    restart: unless-stopped
+
+  # ─── Budget Tracker ────────────────────────────────────────
+  actual:
+    image: actualbudget/actual-server:latest
+    container_name: actual
+    volumes:
+      - ./actual:/data
+    ports:
+      - "5006:5006"
+    restart: unless-stopped

@@ -38,8 +38,11 @@
 | Wazuh Dashboard | https://10.2.7.110:443 | admin / [REDACTED] |
 | Wazuh Manager API | https://10.2.7.110:55000 | API key auth |
 | PVE Host | https://10.2.7.64:8006 | root@pam / [REDACTED] |
-| NPM Admin (CT 108) | http://10.2.7.109:81 | admin@example.com / [REDACTED] |
-| Vaultwarden Admin | http://10.2.7.109 (via NPM) | `/admin` — [REDACTED token] |
+| NPM Admin (CT 108) | http://10.2.7.109:81 | anthonypiper1@gmail.com / nppass |
+| Vaultwarden Admin (CT 104) | http://vaultwarden.pirate.lan | `/admin` — token stored in Hermes memory |
+| OnlyOffice | http://10.2.7.99:8083 | JWT secret: officesecret2026 |
+| Actual Budget | http://budget.pirate.lan | First-run setup |
+| LanguageTool API | http://languagetool.pirate.lan:8010 | API only, no UI |
 | Jellyfin | http://10.2.7.109:8096 | First user = admin |
 
 ## Notes

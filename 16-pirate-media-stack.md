@@ -13,7 +13,6 @@
 | Container | Port | Purpose |
 |-----------|------|---------|
 | **Nginx Proxy Manager** (npm) | `80/443` (Web), `81` (Admin UI) | Reverse proxy, subdomain routing `*.pirate.lan` → CT 108 |
-| **Vaultwarden** | `80/tcp` (via NPM) | Bitwarden-compatible password manager |
 | **qBittorrent** | `8080` (Web UI), `6881` (TCP/UDP) | Torrent client |
 | **Prowlarr** | `9696` | Indexer aggregator |
 | **Flaresolverr** | `8191` | Cloudflare bypass for indexers |

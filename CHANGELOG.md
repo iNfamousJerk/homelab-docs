@@ -6,6 +6,26 @@
 
 ---
 
+## [2026-05-27] — Office Stack Deployed + Vaultwarden Migration
+
+| File | Change | Reason | Author |
+|------|--------|--------|--------|
+| `configs/nextcloud-office-stack.yml` | Created | Compose file for Vaultwarden, OnlyOffice, LanguageTool, Actual Budget on CT 104 | Hermes |
+| `services-roadmap.md` | Updated Vaultwarden location, added OnlyOffice/LanguageTool/Actual/Nextcloud apps | Reflect deployed office stack | Hermes |
+| `CREDENTIALS.md` | Added OnlyOffice, LanguageTool, Actual Budget entries | New services need login refs | Hermes |
+| `16-pirate-media-stack.md` | Removed Vaultwarden from pirate services | Migrated to CT 104 | Hermes |
+
+**Infrastructure changes:**
+- Nextcloud CT bumped 512MB→4GB RAM, 1→2 vCPU, 30→50GB disk
+- Vaultwarden migrated from CT 108 (pirate) → CT 104 (nextcloud)
+- New Docker stack on CT 104: Vaultwarden (:8082), OnlyOffice (:8083), LanguageTool (:8010), Actual Budget (:5006)
+- NPM proxy hosts added: vaultwarden.pirate.lan, budget.pirate.lan, languagetool.pirate.lan
+- Pi-hole DNS wildcard *.pirate.lan → 10.2.7.109 added
+- Nextcloud apps enabled: Deck, Mail, Calendar, Talk
+- NPM login reset: admin@example.com → anthonypiper1@gmail.com / nppass
+
+---
+
 ## [2026-05-26] — Pirate Media Stack Documentation
 
 | File | Change | Reason | Author |
