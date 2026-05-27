@@ -6,6 +6,14 @@
 
 ---
 
+## [2026-05-27] — SOC Monitoring Expansion + Homarr Office Column
+
+- **Prometheus**: Added blackbox_http (16 targets), blackbox_tcp (10 targets), nut (UPS) jobs — 40/40 targets up
+- **Node Exporters**: Installed on ALL 9 CTs (100-108) for per-container system metrics
+- **Grafana**: Created "🏠 Homelab Overview" dashboard (41 panels) — system metrics per CT, service uptime, Office/Media service status panels, quick links to Homarr and every service
+- **Homarr**: Added Office column (OnlyOffice, Vaultwarden, Actual Budget, LanguageTool), moved NPM to Networking, added PBS to Networking, removed old pirate Vaultwarden
+- **Docs**: Updated 07-homarr.md (full layout table), 10-grafana.md (40 targets, new dashboard), services-roadmap.md (SOC monitoring status, Actual Budget deployed)
+
 ## [2026-05-27] — Office Stack Deployed + Vaultwarden Migration
 
 | File | Change | Reason | Author |
