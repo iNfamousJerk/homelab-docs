@@ -23,6 +23,11 @@
 - Pi-hole DNS wildcard *.pirate.lan → 10.2.7.109 added
 - Nextcloud apps enabled: Deck, Mail, Calendar, Talk
 - NPM login reset: admin@example.com → anthonypiper1@gmail.com / nppass
+- Prometheus monitoring expanded: 40 targets across 9 jobs
+- Node exporters installed on: Hermes (100), Immich (101), PiAlert (102), Homarr (103), Nextcloud (104), Wazuh (105), Pi-hole (107), Pirate (108)
+- Blackbox HTTP probes: OnlyOffice, Actual, LanguageTool, Jellyfin, all *arrs, NPM
+- Blackbox TCP probes: Vaultwarden, NPM port 80, Hermes API
+- Added configs/prometheus.yml to docs repo
 
 ---
 
