@@ -18,9 +18,26 @@ First-time setup or adding new services:
 5. Name it, enter the URL, save
 6. Drag tiles to arrange your layout
 
-Current services added:
-- **Hermes Agent**: Custom API widget → http://10.2.7.107:8642/health
-- **Grafana**: URL widget → http://10.2.7.108:3000
+## Current Layout
+
+Homarr is organized into category sections (top to bottom):
+
+| Section | Services | Count |
+|---------|----------|-------|
+| **Monitoring** | Uptime Kuma, Wazuh, Grafana, Prometheus, Hermes, Alertmanager | 6 |
+| **Storage** | NextCloud, Immich, GitHub, Gitea | 4 |
+| **Networking** | OPNsense, Pi-hole, PiAlert, Nginx Proxy Manager, PBS | 5 |
+| **Media** | qBittorrent, Radarr, Sonarr, Prowlarr, Bazarr, Lidarr, FlareSolverr, Jellyfin, Jellyseerr | 9 |
+| **Office** | OnlyOffice, Vaultwarden, Actual Budget, LanguageTool | 4 |
+
+All services have health ping URLs — Homarr shows green/red status dots next to each tile.
+
+### Quick Add (via SQLite)
+Services can be added directly to the SQLite DB for automation:
+```bash
+ssh root@10.2.7.105 "sqlite3 /opt/homarr_db/db.sqlite"
+# See the homelab-dashboard skill for full schema and examples
+```
 
 ## Maintenance
 ### Update Homarr

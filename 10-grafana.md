@@ -22,23 +22,48 @@ This stack runs on CT 106 (10.2.7.108) and monitors:
 
 ## Scrape Targets (Prometheus)
 
-| Job | Target | What It Monitors |
-|-----|--------|------------------|
+| Job | Targets | What It Monitors |
+|-----|---------|------------------|
 | `node_pve` | 10.2.7.64:9100 | PVE host CPU, RAM, disk |
-| `node_containers` | 10.2.7.108:9100 | CT 106 resources |
-| `cadvisor` | 10.2.7.108:8080 | All Docker containers |
+| `node_containers` | All 9 CTs (100–108):9100 | **Every container** — CPU, RAM, disk, network |
+| `blackbox_http` | 16 targets | HTTP health probes for all web services |
+| `blackbox_tcp` | 10 targets | TCP health probes for non-HTTP services |
+| `cadvisor` | 10.2.7.108:8080 | All Docker containers on CT 106 |
 | `pihole` | 10.2.7.108:9617 | DNS queries, top domains |
+| `nut` | 10.2.7.108:9999 | UPS battery, load, power (CyberPower CP1500) |
 | `prometheus` | localhost:9090 | Prometheus self |
+
+**Current status: 40/40 targets up** across all 9 scrape jobs.
+
+Blackbox HTTP targets cover every service web UI — from Immich, Grafana, and Wazuh to Jellyfin, all *arrs, NPM, OnlyOffice, Vaultwarden, Actual Budget, and LanguageTool.
 
 ## Dashboards
 
 | Dashboard | Description |
 |-----------|-------------|
-| **Node Exporter Full** | Host-level CPU, RAM, disk, network (PVE + CT 106) |
+| **🏠 Homelab Overview** | **Custom-built** — system metrics per CT, service uptime, docker status, quick links to Homarr + every service |
+| **Node Exporter Full** | Host-level CPU, RAM, disk, network (all CTs) |
 | **Docker Container & Host Metrics** | Container-level metrics via cAdvisor |
 | **Pi-hole Exporter** | DNS query volume, top blocked domains |
+| **UPS - CyberPower CP1500** | NUT UPS monitoring (voltage, load, battery) |
+| **Wazuh Security Events** | Wazuh indexer alerts (via Elasticsearch datasource) |
 
-All dashboards auto-provisioned from `/opt/monitoring/dashboards/`.
+All dashboards auto-provisioned from `/opt/monitoring/dashboards/` **except** the **Homelab Overview** dashboard (created via API, editable).
+
+### Homelab Overview Dashboard
+
+Access: http://10.2.7.108:3000/d/eebe828f-d0b8-4317-a455-798526845314
+
+Contains **41 panels** organized into rows:
+1. **Quick Links** — Browse Homarr, Uptime Kuma, Wazuh, or any service directly
+2. **Status Stats** — CTs online, HTTP/TCP services up, longest uptime, Docker containers
+3. **System Overview** — CPU, RAM, Disk per CT (gauges + time series)
+4. **Office Services** — Individual stat gauges for OnlyOffice, Vaultwarden, Actual Budget, LanguageTool
+5. **Media Services** — Stat gauges for all 10 pirate stack services
+6. **Core Services** — Grafana, Prometheus, Wazuh, Hermes, Immich, etc.
+7. **Docker Containers** — Container CPU and memory usage via cAdvisor
+
+The dashboard has navigation links in the top bar to Homarr, Uptime Kuma, Wazuh, and Prometheus.
 
 ## Alerts (Discord Notifications)
 

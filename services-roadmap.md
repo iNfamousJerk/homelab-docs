@@ -1,6 +1,6 @@
 # Homelab Service Roadmap
 
-> **Last updated:** May 25, 2026
+> **Last updated:** May 27, 2026
 >
 > ✅ = Deployed | 🔄 = In Progress | ⬜ = Planned
 
@@ -35,10 +35,22 @@
 | ✅ Nginx Proxy Manager | CT 108 | Subdomain routing, SSL termination for Pirate stack |
 | ✅ Hermes Agent | CT 100 | AI assistant |
 | ✅ Discord Alerting | — | Wazuh, Grafana, Uptime Kuma → Discord |
+| ✅ **SOC Monitoring** | Grafana (CT 106) | **40/40 Prometheus targets** — all CTs + services monitored |
+| ✅ **Homarr Update** | CT 103 | Office column added, 24 services across 5 sections, all with ping URLs |
 
 ---
 
-## ⬜ Recommended Next Services
+## ⬜ Next: Paperless-ngx
+
+Document management: scan → OCR → auto-tag → searchable.
+
+- Receipts, tax forms, insurance, manuals, medical records
+- Full-text searchable PDFs with auto-generated tags/correspondent
+- Mobile app for scanning with phone camera
+- **Where:** Docker on CT 106 or dedicated CT with mounted storage
+- **Deps:** Persistent storage volume
+
+## ⬜ Future Candidates
 
 ### Priority 1 — Vaultwarden
 Self-hosted Bitwarden-compatible password manager.
