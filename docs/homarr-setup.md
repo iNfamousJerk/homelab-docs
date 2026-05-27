@@ -45,7 +45,9 @@ Homarr is your **single-pane-of-glass dashboard** for the entire homelab. One pl
 
 | Service | Type | URL | Icon |
 |---------|------|-----|------|
-| **Jellyfin** | *(when set up)* | http://10.2.7.X:8096 | jellyfin |
+| **Jellyfin** | *(when set up)* | `http://10.2.7.X:8096` | jellyfin |
+
+> **Removed from CT 104:** OnlyOffice, Vaultwarden, Actual Budget, LanguageTool — Docker stack cleaned up on 2026-05-27
 
 ## Adding a New Service
 

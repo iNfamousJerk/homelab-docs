@@ -25,7 +25,7 @@
 | **Jellyfin** | `8096` | Media streaming server |
 | **Jellyseerr** | `5055` | Media request portal |
 
-> **Note:** Vaultwarden was previously part of this stack but has been **migrated to CT 104 (Nextcloud)**. See [`configs/nextcloud-office-stack.yml`] for the current Vaultwarden deployment.
+> **Note:** Vaultwarden was previously part of this stack but was **migrated to CT 104** and then **removed entirely on 2026-05-27** along with the rest of the office stack. See [08-nextcloud.md](08-nextcloud.md) for current Nextcloud state.
 
 ---
 
