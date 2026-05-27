@@ -34,10 +34,10 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 | 100 | hermesagent | 10.2.7.107 | AI assistant |
 | 101 | Immich | 10.2.7.44 | Photo backup |
 | 102 | PiAlert | 10.2.7.77 | Network monitoring |
-| 103 | Homarr | 10.2.7.105 | Dashboard |
-| 104 | Nextcloud | 10.2.7.99 | Cloud storage |
+| 103 | Homarr | 10.2.7.105 | Dashboard — **removed by user** |
+| 104 | Nextcloud | 10.2.7.99 | Cloud storage (OnlyOffice, Vaultwarden, Actual Budget, LanguageTool removed) |
 | 105 | Wazuh | 10.2.7.110 | SIEM manager |
-| 106 | Grafana | 10.2.7.108 | Monitoring stack (10 Docker containers) |
+| 106 | Grafana | 10.2.7.108 | Monitoring stack (9 Docker containers) |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
 | 108 | Pirate | 10.2.7.109 | Media stack (10 Docker containers) |
 | 109 | Kuma | 10.2.7.111 | Uptime Kuma standalone |
@@ -75,7 +75,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [04-pihole.md](04-pihole.md) | Pihole DNS + DHCP |
 | [05-immich.md](05-immich.md) | Photo backup |
 | [06-pialert.md](06-pialert.md) | Network monitoring |
-| [07-homarr.md](07-homarr.md) | Dashboard |
+| [07-homarr.md](07-homarr.md) | Dashboard — **removed, see docs/homarr-setup.md for reference** |
 | [homarr-setup.md](homarr-setup.md) | **Homarr dashboard setup guide** — all services, widgets, recommended layout |
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
