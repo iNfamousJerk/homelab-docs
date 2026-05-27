@@ -39,7 +39,7 @@ See **[02-containers.md](02-containers.md)** for the full container list with sp
 | 105 | Wazuh | 10.2.7.110 | SIEM manager |
 | 106 | Grafana | 10.2.7.108 | Monitoring stack (10 Docker containers) |
 | 107 | Pi-hole | 10.2.7.2 | DNS + DHCP |
-| 108 | Pirate | 10.2.7.109 | Media stack (11 Docker containers) |
+| 108 | Pirate | 10.2.7.109 | Media stack (10 Docker containers) |
 
 ---
 
@@ -79,7 +79,7 @@ Each doc includes **exact copy-paste commands** for rebuilding from scratch:
 | [08-nextcloud.md](08-nextcloud.md) | Cloud storage |
 | [09-hermes-agent.md](09-hermes-agent.md) | AI assistant |
 | [13-wazuh.md](13-wazuh.md) | Wazuh SIEM security monitoring (all 8 CTs) |
-| [16-pirate-media-stack.md](16-pirate-media-stack.md) | CT 108 — Media automation, Jellyfin, Vaultwarden |
+|| [16-pirate-media-stack.md](16-pirate-media-stack.md) | CT 108 — Media automation, Jellyfin, NPM (Vaultwarden migrated to CT 104) |
 
 ### Networking & Access
 | Doc | What It Covers |
@@ -117,7 +117,7 @@ homelab-docs/
 ├── 13-wazuh.md                      — Wazuh SIEM security monitoring
 ├── 14-ups-monitoring.md             — UPS monitoring (NUT · Prometheus · Grafana · Discord alerts)
 ├── 15-pbs-setup.md                  — Proxmox Backup Server hardware & integration
-├── 16-pirate-media-stack.md         — CT 108 media stack, Vaultwarden, NPM
+├── 16-pirate-media-stack.md         — CT 108 media stack (10 containers), NPM, no Vaultwarden
 ├── scripts/                         — Pre-commit hook, secret scanner
 ├── CREDENTIALS.md                   — Login reference (passwords redacted)
 ├── SECURITY-CHECKLIST.md            — Expansion security protocol (4-phase)

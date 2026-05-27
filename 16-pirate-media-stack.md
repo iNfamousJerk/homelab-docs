@@ -1,14 +1,16 @@
 # 🏴‍☠️ CT 108 — Pirate Media Stack
 
-> **Purpose:** Media automation, streaming, and self-hosted password management
+> **Purpose:** Media automation, streaming, and reverse proxy management
 > **Host:** CT 108 (Proxmox container on PVE1)
 > **IP:** `10.2.7.109`
 > **OS:** Debian 13 (Trixie)
-> **Specs:** 2 vCPUs · 2GB RAM · 10GB disk (7.3GB used)
+> **Specs:** 2 vCPUs · 5.9Gi RAM · 99G disk (7.3G used)
 
 ---
 
 ## 📦 Services
+
+**10 containers** running via Docker Compose at `/opt/media-stack/docker-compose.yml`:
 
 | Container | Port | Purpose |
 |-----------|------|---------|
@@ -22,6 +24,8 @@
 | **Bazarr** | `6767` | Subtitle management |
 | **Jellyfin** | `8096` | Media streaming server |
 | **Jellyseerr** | `5055` | Media request portal |
+
+> **Note:** Vaultwarden was previously part of this stack but has been **migrated to CT 104 (Nextcloud)**. See [`configs/nextcloud-office-stack.yml`] for the current Vaultwarden deployment.
 
 ---
 
@@ -57,7 +61,6 @@ All *arr services have `- /data:/data` bind mounts so they share the same filesy
 | Bazarr | `http://10.2.7.109:6767` |
 | Jellyfin | `http://10.2.7.109:8096` |
 | Jellyseerr | `http://10.2.7.109:5055` |
-| Vaultwarden | Via NPM — `https://vaultwarden.pirate.lan` (internal) |
 
 > **Pi-hole DNS:** Add a wildcard A record `*.pirate.lan → 10.2.7.109` for subdomain access.
 
@@ -67,9 +70,8 @@ All *arr services have `- /data:/data` bind mounts so they share the same filesy
 
 | Service | Login |
 |---------|-------|
-| NPM Admin | `http://10.2.7.109:81` — see [`CREDENTIALS.md`](CREDENTIALS.md) |
-| Vaultwarden Admin | `/admin` — uses `ADMIN_TOKEN` from `.env` |
-| Vaultwarden Users | Open signup (can be disabled in docker-compose.yml) |
+| NPM Admin | `http://10.2.7.109:81` — login: `anthonypiper1@gmail.com` / `nppass` (stored in compose comment; needs rotation) |
+| Vaultwarden Admin | **Migrated to CT 104** — see nextcloud docs |
 
 All passwords stored in [`CREDENTIALS.md`](CREDENTIALS.md) and Hermes memory.
 
@@ -94,14 +96,20 @@ docker compose logs -f <service_name>
 docker compose down
 ```
 
+### Compose file overview
+
+The compose file uses YAML anchors for common settings (PUID=1000, PGID=1000, TZ=America/New_York, DNS 1.1.1.1/1.0.0.1, restarts unless-stopped, AppArmor=unconfined). NPM config is stored in `./config/npm/`.
+
 ---
 
 ## 🛡️ Security Notes
 
-- **No VPN yet** — qBittorrent runs without a tunnel. Add Gluetun when ProtonVPN arrives.
+- **No VPN yet** — qBittorrent runs without a tunnel. Add Gluetun when ProtonVPN arrives. The compose has a placeholder comment for this.
 - **AppArmor** — set to `unconfined` for *arr services to avoid filesystem permission issues.
 - **NPM** — provides SSL termination via Nginx. Currently uses self-signed certs; Let's Encrypt ready.
-- **Vaultwarden** — behind NPM only. No public exposure. Admin panel on `/admin` with token auth.
+- **NPM default admin** — still using `admin@example.com/changeme`? Needs verification — compose comment shows `anthonypiper1@gmail.com / nppass` but the default NPM creds were `admin@example.com/changeme`.
+- **Vaultwarden** — migrated off CT 108 to CT 104 (Nextcloud).
+- **CT specs** — was originally 2GB RAM / 10GB disk but was resized to 5.9Gi RAM / 99G disk to handle media operations.
 
 ---
 
@@ -114,6 +122,7 @@ docker compose down
 | Public Jellyfin | ⬜ Planned | Via Cloudflare Tunnel or VPN only |
 | Move to PVE2 | ⬜ Planned | Media stack will migrate to dedicated PVE2 node |
 | Hardware transcoding | ⬜ Future | Requires GPU passthrough (Intel QSV possible on PVE2) |
+| NPM cred rotation | ⬜ Needed | Default creds still in use |
 
 ---
 
@@ -125,7 +134,7 @@ docker compose down
 | Jellyfin playback fails | Check file permissions — all containers run as PUID 1000 |
 | NPM proxy not working | Verify Pi-hole wildcard `*.pirate.lan → 10.2.7.109` is set |
 | Port conflict | CT 108 has ports 80/443 — cannot coexist with another container hosting a reverse proxy on same ports |
-| Disk full | `df -h` — CT 108 has only 10GB; `/data` is inside the container rootfs. No separate mount yet. |
+| Disk full | `df -h` — CT 108 has 99G total, 7.3G used. Monitor `/data` usage as media grows |
 
 ---
 
@@ -134,3 +143,4 @@ docker compose down
 - [`docker-compose.yml`](configs/pirate-docker-compose.yml) — Full compose file
 - [`services-roadmap.md`](services-roadmap.md) — Planned service upgrades
 - [`SECURITY-CHECKLIST.md`](SECURITY-CHECKLIST.md) — Expansion security protocol
+- CT 104 Nextcloud docs — Vaultwarden now runs there
